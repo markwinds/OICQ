@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">OICQ</string>
+    <string name="welcome">Welcome\nto\nOICQ</string>
+    <string name="welcome1">OICQ</string>
+    <string name="welcome2">OICQ</string>
+    <!--<string name="app_name">OICQ</string>-->
+    <!--<string name="app_name">OICQ</string>-->
 </resources>

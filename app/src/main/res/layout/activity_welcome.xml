@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--scaleType是用来控制图片加载属性的，centerCrop居中按比例填充-->
+    <ImageView
+        android:src="@drawable/welcome"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--字体大小一般用sp fontFamily是用来控制字体的 gravity来指定文字居中显示-->
+    <TextView
+        android:id="@+id/textView"
+        android:text="@string/welcome"
+        android:textColor="#92c232"
+        android:textSize="50sp"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
