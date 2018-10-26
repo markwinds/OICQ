@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">OICQ</string>
     <string name="welcome">Welcome\nto\nOICQ</string>
-    <string name="welcome1">OICQ</string>
-    <string name="welcome2">OICQ</string>
-    <!--<string name="app_name">OICQ</string>-->
-    <!--<string name="app_name">OICQ</string>-->
+    <string name="guide_page1">Find new friends</string>
+    <string name="guide_page2">It is a new word!!</string>
+    <string name="enter_app">Start</string>
+
+
 </resources>

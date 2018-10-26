@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--滑动切换页面的控件-->
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_guide"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </android.support.v4.view.ViewPager>
 
+    <!--下面是显示三个点图片-->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
@@ -17,24 +19,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
-            android:id="@+id/iv_indicator_dot1"
-            android:src="@drawable/ss"
+            android:id="@+id/iv_point1"
+            android:src="@drawable/selected"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_width="10dp"
             android:layout_height="10dp" />
 
         <ImageView
-            android:id="@+id/iv_indicator_dot2"
-            android:src="@drawable/ss"
+            android:id="@+id/iv_point2"
+            android:src="@drawable/unselected"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_width="10dp"
             android:layout_height="10dp" />
 
         <ImageView
-            android:id="@+id/iv_indicator_dot3"
-            android:src="@drawable/ss"
+            android:id="@+id/iv_point3"
+            android:src="@drawable/unselected"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_width="10dp"
