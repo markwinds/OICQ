@@ -35,16 +35,16 @@ public class WelcomeActivity extends AppCompatActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("oicq", MODE_PRIVATE);
                 boolean guide = sharedPreferences.getBoolean("guide", true);        //如果没找到guide则表示第一次进入
 //                if(guide){
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean("guide",false);
-                    editor.apply();
-                    Intent intent = new Intent(WelcomeActivity.this, GuideActivity.class);      //第一次进入是进入引导界面
-                    startActivity(intent);
-                    finish();
-//                } else {
-//                    Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);      //直接进入登录页面
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putBoolean("guide",false);
+//                    editor.apply();
+//                    Intent intent = new Intent(WelcomeActivity.this, GuideActivity.class);      //第一次进入是进入引导界面
 //                    startActivity(intent);
 //                    finish();
+//                } else {
+                    Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);      //直接进入登录页面
+                    startActivity(intent);
+                    finish();
 //                }
             }
         }, DELAY);

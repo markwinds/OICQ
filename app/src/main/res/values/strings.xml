@@ -5,5 +5,10 @@
     <string name="guide_page2">It is a new word!!</string>
     <string name="enter_app">Start</string>
 
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="button_login">Log in</string>
+    <string name="button_signin">Sign in</string>
+
 
 </resources>
