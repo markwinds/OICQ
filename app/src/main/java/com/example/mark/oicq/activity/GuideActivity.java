@@ -34,7 +34,7 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);   //隐藏导航栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);       //隐藏状态栏
         }
-        getSupportActionBar().hide();       //隐藏actionbar
+        //getSupportActionBar().hide();       //隐藏actionbar
 
         //------------------将进度点与对应的控件匹配-----------------
         for(int i=0;i<PICTURE_NUM;i++){

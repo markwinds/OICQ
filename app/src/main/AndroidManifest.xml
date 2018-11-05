@@ -19,8 +19,11 @@
         <activity android:name=".activity.GuideActivity" />
         <activity
             android:name=".activity.LoginActivity"
-            android:theme="@style/Theme.Shrine"/>
+            android:theme="@style/Theme.Shrine" />
         <activity android:name=".activity.MainActivity" />
+        <activity
+            android:name=".activity.HomePageActivity"
+            android:theme="@style/HomeTheme"/>
     </application>
 
 </manifest>

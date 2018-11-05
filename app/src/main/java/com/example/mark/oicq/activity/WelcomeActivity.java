@@ -26,7 +26,7 @@ public class WelcomeActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);   //隐藏导航栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);       //隐藏状态栏
         }
-        getSupportActionBar().hide();       //隐藏actionbar
+        //getSupportActionBar().hide();       //隐藏actionbar
 
         new Handler().postDelayed(new Runnable() {      //利用Handler完成延时跳转
             @Override
