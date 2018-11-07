@@ -21,8 +21,9 @@
             android:name=".activity.LoginActivity"
             android:theme="@style/Theme.Shrine" />
         <activity android:name=".activity.MainActivity" />
-        <activity
-            android:name=".activity.WelcomeActivity"/>
+        <activity android:name=".activity.WelcomeActivity" />
+        <activity android:name=".activity.ChatActivity"/>
+        <!--<activity android:name=".activity.HomePageActivity"/>-->
     </application>
 
 </manifest>
