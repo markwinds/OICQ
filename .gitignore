@@ -63,3 +63,5 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+server/OICQServer/.project
+server/OICQServer/.settings/org.eclipse.jdt.core.prefs
