@@ -18,7 +18,7 @@ public class ServerListener extends Thread{
 			serverSocket = new ServerSocket(27777, 30);				//27777是服务器监听的端口，27队列长度
 			while (true) {
 				Socket socket = serverSocket.accept();				//当没有客户端发出请求是程序就会阻塞在这一句
-				System.out.println("haha");							//当有客户端发送请求就在服务器控制台输出haha
+				System.out.println("Receive socket request, begin to open a thread to server");							//当有客户端发送请求就在服务器控制台输出haha
 				ChatSocket chatSocket = new ChatSocket(socket);		
 				chatSocket.start();									//开启新的一个线程,来一个用户就开启一个线程
 			}

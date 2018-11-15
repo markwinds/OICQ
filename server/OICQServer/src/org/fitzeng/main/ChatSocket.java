@@ -42,10 +42,17 @@ public class ChatSocket extends Thread{
 	public void run() {
 		try {
 			String line = null;
+			System.out.println("thread is builded");
+//			while((line = bufferedReader.readLine()) == null) 
+//				System.out.println("en....");
+//			message += line;
 			while ((line = bufferedReader.readLine()) != null) {
+				System.out.println("I am here");
 				if (!line.equals("-1")) {	
 					message += line;
+					System.out.println("re....");
 				} else {
+					System.out.println("begin to deal msg");
 					delMessage(message);							//处理接收到的数据
 	            	System.out.println("receive : " + message);		//控制台显示接受到的数据
 					line = null;

@@ -15,7 +15,7 @@ public class DBManager {
 	
 	//-------------------------------------------url要改成自己对应的数据库---------------------------------------------------------------
 	
-	private static final String url = "jdbc:mysql://localhost/myfirstapp";
+	private static final String url = "jdbc:mysql://localhost/oicq";
 	private Statement statement;
 	
 	public static DBManager getDBManager() {
@@ -65,17 +65,17 @@ public class DBManager {
 		// Create table Users
 		createTabUsers();
 		
-		// Create table UserInfo
-		createTabUserInfo();
+		// // Create table UserInfo
+		// createTabUserInfo();
 		
-		// Create table Friends
-		createTabFriends();
+		// // Create table Friends
+		// createTabFriends();
 		
-		// Create table Groups
-		createTabGroups();
+		// // Create table Groups
+		// createTabGroups();
 		
-		// Create table GroupInfo
-		createTabGroupInfo();
+		// // Create table GroupInfo
+		// createTabGroupInfo();
 		
 		statement.close();
 	}
@@ -206,7 +206,7 @@ public class DBManager {
 		共同组成，并且主关键字的列不能包含空值。主关键字是可选的，并且可在 CREATE TABLE 或 ALTER TABLE 语句中定义。 */
 		//插入数据
 		statement.execute("INSERT INTO Users VALUES(\"Tony\", \"12345tony\");");
-		statement.execute("INSERT INTO Users VALUES(\"Stark\", \"12345stark\");");
+		statement.execute("INSERT INTO Users VALUES(\"mark\", \"1202\");");
 		statement.execute("INSERT INTO Users VALUES(\"Elon\", \"12345elon\");");
 		statement.execute("INSERT INTO Users VALUES(\"Musk\", \"12345musk\");");
 		statement.execute("INSERT INTO Users VALUES(\"Musk1\", \"12345musk1\");");
