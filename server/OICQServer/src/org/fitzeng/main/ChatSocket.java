@@ -62,6 +62,7 @@ public class ChatSocket extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
+			System.out.println("thread is over!!!");
 			try {
 				MainWindow.getMainWindow().setShowMsg(this.username + " login out !");
 				MainWindow.getMainWindow().removeOfflineUsers(this.username);
