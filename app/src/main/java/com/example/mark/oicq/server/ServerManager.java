@@ -12,7 +12,8 @@ import java.net.Socket;
 
 public class ServerManager extends Thread {
     //private static final String IP = "192.168.70.41";			//这里填写网络ip，如果不用付费的内网穿透，这里在每次开通内网穿透的时候都要改为对应ip
-    private static final String IP = "192.168.1.4";
+    //private static final String IP = "192.168.1.4";
+    private static final String IP = "http://u3wgnp.natappfree.cc";
     private Socket socket;
     private String username;
     private int iconID;
