@@ -12,5 +12,9 @@
 
     <string name="username">Mark</string>
 
+    <string name="add_friend_name_hint">Type username here</string>
+    <string name="add_friend_remark_hint">Type remark here</string>
+    <string name="add_friend_button">Add</string>
+
 
 </resources>

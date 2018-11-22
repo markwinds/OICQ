@@ -1,5 +1,7 @@
 package com.example.mark.oicq.activity;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import com.example.mark.oicq.R;
 import com.example.mark.oicq.adapter.FriendAdapter;
 import com.example.mark.oicq.classes.Friend;
+import com.example.mark.oicq.context.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +33,21 @@ public class HomePageActivity extends AppCompatActivity {
     private Friend friend=new Friend(R.drawable.profile_big,"Lucy");
     private List<Friend> friendList=new ArrayList<>();
     private SwipeRefreshLayout homeRefresh;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
+        MyApplication.setActivityContent(HomePageActivity.this);
+
         final DrawerLayout mDrawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         ImageView homeProfile=findViewById(R.id.home_profile);
         RecyclerView homeRecyclerView=findViewById(R.id.home_recycle_view);
         homeRefresh=findViewById(R.id.home_refresh);
+        floatingActionButton=findViewById(R.id.add_button);
 
         friendList.clear();
         for(int i=0;i<50;i++){
@@ -66,6 +73,14 @@ public class HomePageActivity extends AppCompatActivity {
             public void onRefresh() {
                 //在这里添加主页刷新的逻辑
                 homeRefresh.setRefreshing(false);
+            }
+        });
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, AddFriendActivity.class);
+                startActivity(intent);
             }
         });
 

@@ -1,7 +1,11 @@
 package com.example.mark.oicq.server;
 
 import android.content.Context;
+import android.os.Message;
 import android.util.Log;
+
+import com.example.mark.oicq.activity.AddFriendActivity;
+import com.example.mark.oicq.classes.MyHandler;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,9 +15,9 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 public class ServerManager extends Thread {
-    //private static final String IP = "192.168.70.41";			//这里填写网络ip，如果不用付费的内网穿透，这里在每次开通内网穿透的时候都要改为对应ip
+    private static final String IP = "192.168.70.41";			//这里填写网络ip，如果不用付费的内网穿透，这里在每次开通内网穿透的时候都要改为对应ip
     //private static final String IP = "192.168.1.4";
-    private static final String IP = "http://u3wgnp.natappfree.cc";
+    //private static final String IP = "http://u3wgnp.natappfree.cc";
     private Socket socket;
     private String username;
     private int iconID;
@@ -40,12 +44,17 @@ public class ServerManager extends Thread {
             String m = null;
             String line;
             while ((line = bufferedReader.readLine()) != null) {
+                Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被调用");
                 if (!line.equals("-1")) {
                     m += line;
                 } else {
-                    Log.d("TAG", "receive : " + m);			//日志输出收到的信息
                     if (ParaseData.getAction(m).equals("GETCHATMSG")) {
                         receiveChatMsg.delChatMsg(m);
+                    } else if(ParaseData.getAction(m).equals("SERAPPLYFRIEND")){       //如果是服务器主动发起的好友申请
+                        applyFriend(m);
+                    } else if(ParaseData.getAction(m).equals("SERRESPONDFRIEND")){
+                        Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","收到信息");
+                        respondFriend(m);
                     } else {
                         message = m;
                     }
@@ -55,7 +64,6 @@ public class ServerManager extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            Log.e("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh","Thread is over!!!");
             try {
                 bufferedWriter.close();
                 bufferedReader.close();
@@ -68,18 +76,23 @@ public class ServerManager extends Thread {
 
 
     public void sendMessage(Context context, String msg) {
-        try {
-            while (socket == null) ;
-            if (bufferedWriter != null) {
-//                Log.d("TAG", "send : " + msg);
-                bufferedWriter.write(msg + "\n");
-                bufferedWriter.flush();
-                bufferedWriter.write("-1\n");
-                bufferedWriter.flush();
+        final String message=msg;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (socket == null) ;
+                    if (bufferedWriter != null) {
+                        bufferedWriter.write(message + "\n");
+                        bufferedWriter.flush();
+                        bufferedWriter.write("-1\n");
+                        bufferedWriter.flush();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     //用来接收数据存放到message
@@ -116,4 +129,20 @@ public class ServerManager extends Thread {
     public void setIconID(int iconID) {
         this.iconID = iconID;
     }
+
+    public void applyFriend(String msg){
+        Message message=Message.obtain();
+        message.what=1;
+        message.obj=msg;
+        MyHandler.getMyHandler().sendMessage(message);
+    }
+
+    public void respondFriend(String msg){
+        Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","发送数据");
+        Message message=Message.obtain();
+        message.what=2;
+        message.obj=msg;
+        MyHandler.getMyHandler().sendMessage(message);
+    }
+
 }

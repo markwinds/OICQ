@@ -22,5 +22,12 @@ public class ChatManager {
 	public void remove(SocketMsg cs) {
 		socketList.remove(cs);
 	}
+
+	public SocketMsg getSocketMsg(String username){			//根据用户名找到对应的SocketMsg
+		for(int i=0;i<socketList.size();i++){
+			if(socketList.get(i).getUsername().equals(username)) return socketList.get(i);
+		}
+		return null;
+	}
 	
 }

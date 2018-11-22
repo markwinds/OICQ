@@ -63,27 +63,32 @@ public class DBManager {
 		statement = connection.createStatement();
 		
 		// Create table Users
-		createTabUsers();
+		//createTabUsers();
 		
 		// // Create table UserInfo
-		// createTabUserInfo();
+		
 		
 		// // Create table Friends
-		// createTabFriends();
+		
 		
 		// // Create table Groups
 		// createTabGroups();
 		
 		// // Create table GroupInfo
 		// createTabGroupInfo();
-		
+
+
+		/*createTabFriends();
+		createTabApply();
+		createTabMessage();
+		createTabUserInfo();*/
+		createTabFeedback();
+		createTabMessage();
+
 		statement.close();
 	}
 	
-	/**
-	 * Create table GroupInfo
-	 * @throws Exception 
-	 */
+
 	private void createTabGroupInfo() throws Exception {
 		statement.execute("DROP TABLE IF EXISTS GroupInfo;");
 		statement.execute("CREATE TABLE GroupInfo ("
@@ -114,10 +119,7 @@ public class DBManager {
 		
 	}
 	
-	/**
-	 * Create table Groups
-	 * @throws Exception
-	 */
+
 	private void createTabGroups() throws Exception {
 		statement.execute("DROP TABLE IF EXISTS Groups;");
 		statement.execute("CREATE TABLE Groups ("
@@ -131,10 +133,7 @@ public class DBManager {
 		statement.execute("INSERT INTO Groups VALUES(\"ElonG2\", \"Elon\");");
 	}
 	
-	/**
-	 * Create table Friends
-	 * @throws Exception
-	 */
+
 	private void createTabFriends() throws Exception {
 		statement.execute("DROP TABLE IF EXISTS Friends;");
 		statement.execute("CREATE TABLE Friends ("
@@ -162,38 +161,21 @@ public class DBManager {
 		statement.execute("INSERT INTO Friends VALUES(\"Musk2\", \"Elon\");");
 		statement.execute("INSERT INTO Friends VALUES(\"Musk5\", \"Elon\");");
 
-
 	}
 	
-	/**
-	 * Create table UserInfo
-	 * @throws Exception
-	 */
+
 	private void createTabUserInfo() throws Exception {
 		statement.execute("DROP TABLE IF EXISTS UserInfo;");
 		statement.execute("CREATE TABLE UserInfo ("
 				+ "username VARCHAR(10),"
-				+ "avatar VARCHAR(10),"
-				+ "sign VARCHAR(40),"
-				+ "background VARCHAR(10),"
-				+ "state VARCHAR(1),"
+				+ "password VARCHAR(20),"			//密码
+				+ "signed VARCHAR(10),"				//是否登录,1是登录
+				+ "updates INT,"				//是否需要刷新数据
 				+ "PRIMARY KEY(username));");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Tony\", \"1\", \"I am Tony\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Stark\", \"3\", \"I am Stark\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Elon\", \"2\", \"I am Elon\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Musk\", \"1\", \"I am Musk\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Musk1\", \"1\", \"I am Musk1\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Musk2\", \"2\", \"I am Musk2\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Musk3\", \"0\", \"I am Musk3\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Musk4\", \"4\", \"I am Musk4\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Musk5\", \"3\", \"I am Musk5\", \"1\", \"0\");");
-		statement.execute("INSERT INTO UserInfo VALUES(\"Musk6\", \"2\", \"I am Musk6\", \"1\", \"0\");");
+		statement.execute("INSERT INTO UserInfo VALUES(\"markwinds\", \"ischen\", \"0\", \"0\");");
 	}
 	
-	/**
-	 * Create table Users
-	 * @throws Exception
-	 */
+	
 	private void createTabUsers() throws Exception {
 		statement.execute("DROP TABLE IF EXISTS Users;");	//如果用户表表存在就直接退出，不存在就建表
 		statement.execute("CREATE TABLE Users ("			//建表，并给表添加数据项
@@ -216,4 +198,33 @@ public class DBManager {
 		statement.execute("INSERT INTO Users VALUES(\"Musk5\", \"12345musk5\");");
 		statement.execute("INSERT INTO Users VALUES(\"Musk6\", \"12345musk6\");");
 	}
+
+
+	private void createTabApply() throws Exception{
+		statement.execute("DROP TABLE IF EXISTS Apply;");	//好友申请表
+		statement.execute("CREATE TABLE Apply ("			
+				+ "origin VARCHAR(10),"			//申请发起人
+				+ "aim    VARCHAR(10),"			//接收申请人
+				+ "remark VARCHAR(300));");
+	}
+
+
+	private void createTabMessage() throws Exception{
+	statement.execute("DROP TABLE IF EXISTS Message;");	//消息列表
+	statement.execute("CREATE TABLE Message ("			
+			+ "origin  VARCHAR(10),"			//申请发起人
+			+ "aim     VARCHAR(10),"
+			+ "message VARCHAR(1000));");		
+	}
+
+	private void createTabFeedback() throws Exception{
+		statement.execute("DROP TABLE IF EXISTS Feedback;");
+		statement.execute("CREATE TABLE Feedback ("			
+			+ "origin  VARCHAR(10),"			//申请发起人
+			+ "aim     VARCHAR(10),"
+			+ "status  VARCHAR(10));");
+		statement.execute("INSERT INTO Feedback VALUES(\"markwinds\", \"ischen\", \"0\");");
+	}
+
+
 }
