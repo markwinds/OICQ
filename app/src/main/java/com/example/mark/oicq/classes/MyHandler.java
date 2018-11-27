@@ -6,10 +6,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.example.mark.oicq.R;
+import com.example.mark.oicq.activity.HomePageActivity;
 import com.example.mark.oicq.activity.LoginActivity;
 import com.example.mark.oicq.context.MyApplication;
 import com.example.mark.oicq.server.ServerManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +63,8 @@ public class MyHandler extends Handler {
                                     Toast.makeText(MyApplication.getContext(), "Apply send failed", Toast.LENGTH_SHORT).show();
                                 }
                                 //------------------------这里添加更新本地数据的代码-----------------------
+                                HomePageActivity.addFriend(origin);
+
                             }
                         })
                         .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
@@ -104,7 +110,10 @@ public class MyHandler extends Handler {
                 aim=matcher.group(2);
                 status=matcher.group(3);
                 if(status.equals("0")) result="confuse";
-                else result="agree";
+                else{
+                    result="agree";
+                    HomePageActivity.addFriend(origin);
+                }
                 //--------------弹窗--------------------
                 AlertDialog addFriendDialog = new AlertDialog.Builder(MyApplication.getActivityContext())       //对话框不能用MyApplication.getContext()
                         .setTitle("Respond")

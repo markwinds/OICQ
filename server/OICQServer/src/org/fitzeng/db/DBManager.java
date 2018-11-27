@@ -78,12 +78,12 @@ public class DBManager {
 		// createTabGroupInfo();
 
 
-		/*createTabFriends();
-		createTabApply();
-		createTabMessage();
-		createTabUserInfo();*/
-		createTabFeedback();
-		createTabMessage();
+//		createTabFriends();
+//		createTabApply();
+//		createTabMessage();
+//		createTabUserInfo();
+//		createTabFeedback();
+//		createTabMessage();
 
 		statement.close();
 	}
@@ -170,7 +170,7 @@ public class DBManager {
 				+ "username VARCHAR(10),"
 				+ "password VARCHAR(20),"			//密码
 				+ "signed VARCHAR(10),"				//是否登录,1是登录
-				+ "updates INT,"				//是否需要刷新数据
+				+ "updates VARCHAR(10),"				//是否需要刷新数据
 				+ "PRIMARY KEY(username));");
 		statement.execute("INSERT INTO UserInfo VALUES(\"markwinds\", \"ischen\", \"0\", \"0\");");
 	}

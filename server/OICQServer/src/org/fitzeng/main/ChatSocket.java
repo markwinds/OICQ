@@ -25,6 +25,9 @@ public class ChatSocket extends Thread{
 	private BufferedReader bufferedReader;
 	private BufferedWriter bufferedWriter;
     private Connection connection = DBManager.getDBManager().getConnection();
+    private Statement statement;
+    private ResultSet resultSet;
+    private String sql;
     private SocketMsg socketMsg;
 	
 	public ChatSocket(Socket s) {
@@ -41,13 +44,16 @@ public class ChatSocket extends Thread{
 	@Override
 	public void run() {
 		try {
+			try {
+				statement = connection.createStatement();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
 			String line = null;
 			System.out.println("thread is builded");
 			while ((line = bufferedReader.readLine()) != null) {
-//				System.out.println("I am here");
 				if (!line.equals("-1")) {	
 					message += line;
-//					System.out.println("re....");
 				} else {
 					System.out.println("begin to deal msg");
 					delMessage(message);							//处理接收到的数据
@@ -174,97 +180,84 @@ public class ChatSocket extends Thread{
 
 
     private void dealRegister(String msg) {
-		String iusername = null;
-    	String iPassword = null;
-    	
-    	String p = "\\[REGISTER\\]:\\[(.*), (.*)\\]";		//括号前加\\转义，其他的照常写，（）内就是提取出来的一组一组的数据
-    	Pattern pattern = Pattern.compile(p);
-    	Matcher matcher = pattern.matcher(msg);
-    	if (matcher.find()) {
-    		iusername = matcher.group(1);
-    		iPassword = matcher.group(2);
-		}
-		String sql="SELECT * FROM UserInfo WHERE username = '" + iusername + "';";
-		try{
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);
+    	try {
+    		String iusername = null;		//用来存放解析出来的用户名
+        	String iPassword = null;		//用来存放解析出来的密码
+        	String p = "\\[REGISTER\\]:\\[(.*), (.*)\\]";		//括号前加\\转义，其他的照常写，（）内就是提取出来的一组一组的数据
+        	Pattern pattern = Pattern.compile(p);
+        	Matcher matcher = pattern.matcher(msg);
+        	if (matcher.find()) {			//group配对之前一定先调用find函数
+        		iusername = matcher.group(1);
+        		iPassword = matcher.group(2);
+    		}
+    		sql="SELECT * FROM UserInfo WHERE username = '" + iusername + "';";
+			resultSet = statement.executeQuery(sql);
 			if(resultSet.next()){
-				sendMsg("[ACKREGISTER]:[2]");				//返回2代表用户名已经存在
+				sendMsg("[ACKREGISTER]:[2]");		//返回2代表用户名已经存在
 				return;
 			}
-		}catch (SQLException e) {
-			e.printStackTrace();
-		}
-		sql="INSERT INTO UserInfo VALUES ('" + iusername + "','" + iPassword + "','0','0');";
-		try {
-			Statement statement = connection.createStatement();
+    		sql="INSERT INTO UserInfo VALUES ('" + iusername + "','" + iPassword + "','0','0');";
 			statement.execute(sql);	//执行数据库语句
 			this.username = iusername;
 			MainWindow.getMainWindow().setShowMsg(this.username + " sign in!");
 			MainWindow.getMainWindow().addOnlineUsers(this.username);
 			sendMsg("[ACKREGISTER]:[1]");
 			return ;		//返回成功反馈后就结束，不会执行下面的sendMsg("[ACKLOGIN]:[0]")
-		} catch (SQLException e) {
+        	//sendMsg("[ACKREGISTER]:[0]");
+    	}catch (SQLException e) {
 			e.printStackTrace();
 		}
-    	sendMsg("[ACKREGISTER]:[0]");
     }
 
     private void dealLogin(String msg) {
-    	String iusername = null;
-    	String iPassword = null;
-    	
-    	String p = "\\[LOGIN\\]:\\[(.*), (.*)\\]";		//括号前加\\转义，其他的照常写，（）内就是提取出来的一组一组的数据
-    	Pattern pattern = Pattern.compile(p);
-    	Matcher matcher = pattern.matcher(msg);
-    	if (matcher.find()) {
-    		iusername = matcher.group(1);
-    		iPassword = matcher.group(2);
-    	}
-		String sql = "SELECT password FROM UserInfo WHERE username = '" + iusername + "';";	//SELECT password FROM USERS WHERE username = ' + iusername + '; 字符串拼接
-		String sql1 = "UPDATE UserInfo SET signed = '1' WHERE username = '" + iusername + "';";
-		try {
-			Statement statement = connection.createStatement();
-			statement.execute(sql1);	
-			statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);	//执行数据库语句
+    	try {
+    		String iusername = null;
+        	String iPassword = null;
+        	String p = "\\[LOGIN\\]:\\[(.*), (.*)\\]";		//括号前加\\转义，其他的照常写，（）内就是提取出来的一组一组的数据
+        	Pattern pattern = Pattern.compile(p);
+        	Matcher matcher = pattern.matcher(msg);
+        	if (matcher.find()) {
+        		iusername = matcher.group(1);
+        		iPassword = matcher.group(2);
+        	}
+    		sql = "SELECT password FROM UserInfo WHERE username = '" + iusername + "';";	//SELECT password FROM USERS WHERE username = ' + iusername + '; 字符串拼接	
+			resultSet = statement.executeQuery(sql);	//执行数据库语句
 			if (resultSet.next() && iPassword.equals(resultSet.getString(1)) ) {	//resultSet.getString(1)中的1代表的是第1列，列数编号从1开始，参数也可以是列的名字
-				sendMsg("[ACKLOGIN]:[1]");
+				sendMsg("[ACKLOGIN]:[1]");		//向客户端发送成功信息
+				updataUserInfo(iusername,"signed","1");
 				this.username = iusername;
 				MainWindow.getMainWindow().setShowMsg(this.username + " login in!");
 				MainWindow.getMainWindow().addOnlineUsers(this.username);
 				socketMsg = new SocketMsg(this,  this.username);		//某用户拥有的某线程
 				ChatManager.getChatManager().add(socketMsg);
+				updataNewLogin();
 				return ;		//返回成功反馈后就结束，不会执行下面的sendMsg("[ACKLOGIN]:[0]")
 			}
-		} catch (SQLException e) {
+    	} catch (SQLException e) {
 			e.printStackTrace();
 		}
-    	sendMsg("[ACKLOGIN]:[0]");
     }
 
 	public void dealAddFriend(String msg){
-		String origin = null;
-    	String aim = null;
-		String remark=null;
-		ChatManager chatManager=ChatManager.getChatManager();
-    	
-    	String p = "\\[ADDFRIEND\\]:\\[(.*), (.*), (.*)\\]";		
-    	Pattern pattern = Pattern.compile(p);
-    	Matcher matcher = pattern.matcher(msg);
-    	if (matcher.find()) {
-    		origin = matcher.group(1);
-    		aim = matcher.group(2);
-			remark = matcher.group(3);
-    	}
-		if(origin.equals(aim)){
-			sendMsg("[ACKADDFRIEND]:[2]");		//不能加自己为好友
-			return;
-		}
-		String sql = "SELECT * FROM UserInfo WHERE username = '" + aim + "';";	
 		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);	
+			String origin = null;
+	    	String aim = null;
+			String remark=null;
+			ChatManager chatManager=ChatManager.getChatManager();
+	    	String p = "\\[ADDFRIEND\\]:\\[(.*), (.*), (.*)\\]";		
+	    	Pattern pattern = Pattern.compile(p);
+	    	Matcher matcher = pattern.matcher(msg);
+	    	if (matcher.find()) {
+	    		origin = matcher.group(1);
+	    		aim = matcher.group(2);
+				remark = matcher.group(3);
+	    	}
+			if(origin.equals(aim)){
+				sendMsg("[ACKADDFRIEND]:[2]");		//不能加自己为好友
+				return;
+			}
+			sql = "SELECT * FROM UserInfo WHERE username = '" + aim + "';";	
+			resultSet = statement.executeQuery(sql);	
 			if(!resultSet.next()){									//如果没有找到用户
 				sendMsg("[ACKADDFRIEND]:[3]");						//数据库中没有这个用户
 				return;
@@ -275,55 +268,132 @@ public class ChatSocket extends Thread{
 				String msg1 = "[SERAPPLYFRIEND]:[" + origin + ", "+ aim + ", " + remark + "]";
 				chatSocket.sendMsg(msg1);	
 			}else{	//用户不在线就将信息写入申请表
-//				sql="INSERT INTO Apply VALUES ('" + origin + "','" + aim + "');";
-//				statement = connection.createStatement();
-//				statement.execute(sql);	
-//				sql = "SELECT * FROM UserInfo WHERE username = '" + aim + "';";	
-
+				sql="INSERT INTO Apply VALUES ('" + origin + "','" + aim + "','"+remark+"');";
+				doExecute(sql);
+				updataUserInfo(aim,"updates","1");
 			}
 			return;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-    	sendMsg("[ACKADDFRIEND]:[0]");
 	}
     
 
 	public void dealFeedbackFriend(String msg){
-		String origin = null;
-    	String aim = null;
-		String status=null;
-		ChatManager chatManager=ChatManager.getChatManager();
-    	
-    	String p = "\\[FEEDBACKFRIEND\\]:\\[(.*), (.*), (.*)\\]";		
-    	Pattern pattern = Pattern.compile(p);
-    	Matcher matcher = pattern.matcher(msg);
-    	if (matcher.find()) {
-    		origin = matcher.group(1);
-    		aim = matcher.group(2);
-			status = matcher.group(3);
-    	}
-		String sql = "SELECT * FROM UserInfo WHERE username = '" + aim + "';";	
 		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sql);	
+			String origin = null;
+	    	String aim = null;
+			String status=null;
+			ChatManager chatManager=ChatManager.getChatManager();
+	    	String p = "\\[FEEDBACKFRIEND\\]:\\[(.*), (.*), (.*)\\]";		
+	    	Pattern pattern = Pattern.compile(p);
+	    	Matcher matcher = pattern.matcher(msg);
+	    	if (matcher.find()) {
+	    		origin = matcher.group(1);
+	    		aim = matcher.group(2);
+				status = matcher.group(3);
+	    	}
+	    	if(status.equals("1")) {
+    			sql="INSERT INTO Friends VALUES(\""+origin+"\", \""+aim+"\");";
+    			statement.execute(sql);
+    			sql="INSERT INTO Friends VALUES(\""+aim+"\", \""+origin+"\");";
+    			statement.execute(sql);
+	    	}
+			sql = "SELECT * FROM UserInfo WHERE username = '" + aim + "';";	
+			resultSet = statement.executeQuery(sql);	
 			resultSet.next();
 			if (resultSet.getString("signed").equals("1")) {		//如果该用户在线
 				ChatSocket chatSocket = chatManager.getSocketMsg(aim).getChatSocket();
 				String msg1 = "[SERRESPONDFRIEND]:[" + origin + ", "+ aim + ", " + status + "]";
 				chatSocket.sendMsg(msg1);	
 			}else{			
-				
+				sql="INSERT INTO Feedback VALUES ('" + origin + "','" + aim + "','"+status+"');";
+				doExecute(sql);
+				updataUserInfo(aim,"updates","1");
 			}
 			sendMsg("[ACKFEEDBACKFRIEND]:[1]");
 			return;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-    	sendMsg("[ACKFEEDBACKFRIEND]:[0]");
 	}
 
 
+	//----------------执行数据库语句------------------------
+	public ResultSet doExecuteQuery(String sql){
+		try{
+			resultSet = statement.executeQuery(sql);
+			return resultSet;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean doExecute(String sql){
+		try{
+			boolean flag = statement.execute(sql);
+			return flag;
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	//改变某用户的某个属性值
+	public boolean updataUserInfo(String user, String attribute, String value){
+		sql = "UPDATE UserInfo SET "+attribute+" = '"+value+"' WHERE username = '" + user + "';";
+		//System.out.println(sql);	
+		return doExecute(sql);
+	}
+
+	public void updataNewLogin(){
+		try {
+			sql = "SELECT * FROM UserInfo WHERE username = '" + username + "';";	
+			resultSet = statement.executeQuery(sql);	
+			resultSet.next();
+			if (resultSet.getString("updates").equals("1")) {		//如果有数据要更新
+				sql = "SELECT * FROM Apply WHERE aim = '" + username + "';";	
+				resultSet = statement.executeQuery(sql);
+				while(resultSet.next()){
+					String origin,aim,remark;
+					origin=resultSet.getString("origin");
+					aim=resultSet.getString("aim");
+					remark=resultSet.getString("remark");
+					try {
+						Thread.sleep(500);
+					}catch(InterruptedException e){
+						e.printStackTrace();
+					}
+					String msg1 = "[SERAPPLYFRIEND]:[" + origin + ", "+ aim + ", " + remark + "]";
+					sendMsg(msg1);
+				}
+				sql = "DELETE FROM Apply WHERE aim = '" + username + "';";	
+				statement.execute(sql);
+
+				sql = "SELECT * FROM Feedback WHERE aim = '" + username + "';";	
+				resultSet = statement.executeQuery(sql);
+				while(resultSet.next()){
+					String origin,aim,status;
+					origin=resultSet.getString("origin");
+					aim=resultSet.getString("aim");
+					status=resultSet.getString("status");
+					try {
+						Thread.sleep(500);
+					}catch(InterruptedException e){
+						e.printStackTrace();
+					}
+					String msg1 = "[SERRESPONDFRIEND]:[" + origin + ", "+ aim + ", " + status + "]";
+					sendMsg(msg1);
+				}
+				sql = "DELETE FROM Feedback WHERE aim = '" + username + "';";	
+				statement.execute(sql);
+			}
+			updataUserInfo(username,"updates","0");
+		}catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 
 	//获取信息头

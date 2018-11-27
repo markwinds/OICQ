@@ -77,6 +77,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String password = passwordInput.getText().toString();
                 int status=signin(username, password);
                 if (status==1) {
+                    HomePageActivity.setMyUsername(username);
                     Toast.makeText(LoginActivity.this, "Sign in succeed", Toast.LENGTH_SHORT).show();
                 } else if(status==0){
                     usernameInput.setText("");
