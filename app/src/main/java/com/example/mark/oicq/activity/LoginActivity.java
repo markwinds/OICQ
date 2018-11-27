@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (login(username, password)) {
                     //--------在服务器端判断账号密码正确后就将用户状态置为上线-------
                     serverManager.setUsername(username);
+                    HomePageActivity.setMyUsername(username);
                     Intent intent = new Intent(this, HomePageActivity.class);
                     startActivity(intent);
                     finish();

@@ -7,6 +7,7 @@ import android.os.Message;
 import android.widget.Toast;
 
 import com.example.mark.oicq.R;
+import com.example.mark.oicq.activity.ChatActivity;
 import com.example.mark.oicq.activity.HomePageActivity;
 import com.example.mark.oicq.activity.LoginActivity;
 import com.example.mark.oicq.context.MyApplication;
@@ -129,6 +130,22 @@ public class MyHandler extends Handler {
                 addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(15);
                 addFriendDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextSize(15);
                 //Toast.makeText(MyApplication.getContext(), "You succeed!!!!", Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case 3:{
+                String message=(String)msg.obj;
+                String p = "\\[SERMESSAGE\\]:\\[(.*), (.*), (.*)\\]";
+                Pattern pattern = Pattern.compile(p);
+                Matcher matcher = pattern.matcher(message);
+                String result;
+                final String origin,aim,content;
+                matcher.find();
+                origin=matcher.group(1);            //在调用group之前必须先调用find方法
+                aim=matcher.group(2);
+                content=matcher.group(3);
+                Toast.makeText(MyApplication.getContext(), "begin", Toast.LENGTH_SHORT).show();
+                ChatActivity.addMessage(origin,content, com.example.mark.oicq.classes.Message.MESSAGE_TYPE_RECEIVED);
+                Toast.makeText(MyApplication.getContext(), "finish", Toast.LENGTH_SHORT).show();
                 break;
             }
             default: break;

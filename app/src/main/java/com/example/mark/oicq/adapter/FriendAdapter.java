@@ -61,6 +61,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 //                int position=holder.getAdapterPosition();
 //                Friend friend=mFriendList.get(position);
                 Intent intent=new Intent(mContext,ChatActivity.class);
+                ChatActivity.setFriendName(holder.textView.getText().toString());
 //                intent.putExtra()
                 mContext.startActivity(intent);
             }

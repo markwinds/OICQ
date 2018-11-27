@@ -3,9 +3,12 @@ package com.example.mark.oicq.server;
 import android.content.Context;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.mark.oicq.activity.AddFriendActivity;
+import com.example.mark.oicq.activity.LoginActivity;
 import com.example.mark.oicq.classes.MyHandler;
+import com.example.mark.oicq.context.MyApplication;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -44,7 +47,7 @@ public class ServerManager extends Thread {
             String m = null;
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被调用");
+               // Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被调用");
                 if (!line.equals("-1")) {
                     m += line;
                 } else {
@@ -53,8 +56,11 @@ public class ServerManager extends Thread {
                     } else if(ParaseData.getAction(m).equals("SERAPPLYFRIEND")){       //如果是服务器主动发起的好友申请
                         applyFriend(m);
                     } else if(ParaseData.getAction(m).equals("SERRESPONDFRIEND")){
-                        Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","收到信息");
+                       // Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","收到信息");
                         respondFriend(m);
+                    } else if(ParaseData.getAction(m).equals("SERMESSAGE")){
+                        showMsg(m);
+                        //Toast.makeText(MyApplication.getContext(), m, Toast.LENGTH_SHORT).show();
                     } else {
                         message = m;
                     }
@@ -138,9 +144,15 @@ public class ServerManager extends Thread {
     }
 
     public void respondFriend(String msg){
-        Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","发送数据");
         Message message=Message.obtain();
         message.what=2;
+        message.obj=msg;
+        MyHandler.getMyHandler().sendMessage(message);
+    }
+
+    public void showMsg(String msg){
+        Message message=Message.obtain();
+        message.what=3;
         message.obj=msg;
         MyHandler.getMyHandler().sendMessage(message);
     }

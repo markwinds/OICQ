@@ -96,6 +96,7 @@ public class ChatSocket extends Thread{
 				case "REGISTER": { dealRegister(msg); break; }
 				case "ADDFRIEND": { dealAddFriend(msg); break; }
 				case "FEEDBACKFRIEND": { dealFeedbackFriend(msg); break; }
+				case "SENDMESSAGE": { dealSendMessage(msg); break; }
 
 				case "CHATMSG": { dealChatMsg(msg); break; }
 				default : break;
@@ -317,6 +318,40 @@ public class ChatSocket extends Thread{
 			e.printStackTrace();
 		}
 	}
+	
+	void dealSendMessage(String msg) {
+		try {
+			String origin = null;
+	    	String aim = null;
+			String content=null;
+			ChatManager chatManager=ChatManager.getChatManager();
+	    	String p = "\\[SENDMESSAGE\\]:\\[(.*), (.*), (.*)\\]";		
+	    	Pattern pattern = Pattern.compile(p);
+	    	Matcher matcher = pattern.matcher(msg);
+	    	if (matcher.find()) {
+	    		origin = matcher.group(1);
+	    		aim = matcher.group(2);
+	    		content = matcher.group(3);
+	    	}
+			sql = "SELECT * FROM UserInfo WHERE username = '" + aim + "';";	
+			resultSet = statement.executeQuery(sql);	
+			resultSet.next();
+			if (resultSet.getString("signed").equals("1")) {		//如果该用户在线
+				ChatSocket chatSocket = chatManager.getSocketMsg(aim).getChatSocket();
+				String msg1 = "[SERMESSAGE]:[" + origin + ", "+ aim + ", " + content + "]";
+				chatSocket.sendMsg(msg1);	
+			}else{			
+//				sql="INSERT INTO Feedback VALUES ('" + origin + "','" + aim + "','"+status+"');";
+//				doExecute(sql);
+//				updataUserInfo(aim,"updates","1");
+			}
+			return;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 
 
 	//----------------执行数据库语句------------------------

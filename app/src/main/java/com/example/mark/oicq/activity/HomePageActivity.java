@@ -105,7 +105,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     public static void addFriend(String friend){
         friendList.add(new Friend(R.drawable.profile_big,friend));
-        friendAdapter.notifyItemChanged(friendList.size());
+        friendAdapter.notifyItemChanged(friendList.size()-1);
         values.clear();
         values.put("host",myUsername);
         values.put("friend",friend);
