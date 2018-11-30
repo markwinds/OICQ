@@ -137,15 +137,46 @@ public class MyHandler extends Handler {
                 String p = "\\[SERMESSAGE\\]:\\[(.*), (.*), (.*)\\]";
                 Pattern pattern = Pattern.compile(p);
                 Matcher matcher = pattern.matcher(message);
-                String result;
                 final String origin,aim,content;
                 matcher.find();
                 origin=matcher.group(1);            //在调用group之前必须先调用find方法
                 aim=matcher.group(2);
                 content=matcher.group(3);
-                Toast.makeText(MyApplication.getContext(), "begin", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MyApplication.getContext(), "receive message", Toast.LENGTH_SHORT).show();
                 ChatActivity.addMessage(origin,content, com.example.mark.oicq.classes.Message.MESSAGE_TYPE_RECEIVED);
-                Toast.makeText(MyApplication.getContext(), "finish", Toast.LENGTH_SHORT).show();
+                //ChatActivity.chatRecyclerView.scrollToPosition(messageList.size()-1);
+                //Toast.makeText(MyApplication.getContext(), "finish", Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case 4:{
+                String message=(String)msg.obj;
+                String p = "\\[SERUPDATAFRIEND\\]:\\[(.*), (.*)\\]";
+                Pattern pattern = Pattern.compile(p);
+                Matcher matcher = pattern.matcher(message);
+                final String host,friend;
+                matcher.find();
+                host=matcher.group(1);            //在调用group之前必须先调用find方法
+                friend=matcher.group(2);
+                if(!HomePageActivity.haveFriend(friend)){
+                    HomePageActivity.addFriend(friend);
+                }
+                break;
+            }
+            case 5:{
+                String message=(String)msg.obj;
+                String p = "\\[SERUPDATAMSG\\]:\\[(.*), (.*), (.*)\\]";
+                Pattern pattern = Pattern.compile(p);
+                Matcher matcher = pattern.matcher(message);
+                final String origin,aim,content;
+                matcher.find();
+                origin=matcher.group(1);            //在调用group之前必须先调用find方法
+                aim=matcher.group(2);
+                content=matcher.group(3);
+                if(HomePageActivity.getMyUsername().equals(origin)){
+                    ChatActivity.addMessage(aim,content, com.example.mark.oicq.classes.Message.MESSAGE_TYPE_SEND);
+                }else{
+                    ChatActivity.addMessage(origin,content, com.example.mark.oicq.classes.Message.MESSAGE_TYPE_RECEIVED);
+                }
                 break;
             }
             default: break;

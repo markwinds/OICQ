@@ -65,6 +65,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <CheckBox
+                    android:id="@+id/check_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/check_box"
+                    android:layout_toRightOf="@id/check_box"
+                    android:text="Remember me"
+                    android:layout_marginTop="6dp"
+                    android:textSize="15sp"/>
+
                 <android.support.design.button.MaterialButton
                     android:id="@+id/login_button"
                     android:layout_width="wrap_content"

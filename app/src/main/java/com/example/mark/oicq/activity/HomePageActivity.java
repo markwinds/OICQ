@@ -73,6 +73,8 @@ public class HomePageActivity extends AppCompatActivity {
         homeRecyclerView.setAdapter(friendAdapter);
         homeRefresh.setColorSchemeResources(R.color.colorPrimary);
 
+        //ChatActivity.initChat();
+
         //initData();
 
         homeProfile.setOnClickListener(new View.OnClickListener() {
@@ -106,10 +108,19 @@ public class HomePageActivity extends AppCompatActivity {
     public static void addFriend(String friend){
         friendList.add(new Friend(R.drawable.profile_big,friend));
         friendAdapter.notifyItemChanged(friendList.size()-1);
-        values.clear();
-        values.put("host",myUsername);
-        values.put("friend",friend);
-        db.insert("friends",null,values);
+//        values.clear();
+//        values.put("host",myUsername);
+//        values.put("friend",friend);
+//        db.insert("friends",null,values);
+    }
+
+    public static boolean haveFriend(String friend){
+        for(int i=0;i<friendList.size();i++){
+            if(friendList.get(i).getFriendName().equals(friend)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void initData(){
@@ -132,4 +143,7 @@ public class HomePageActivity extends AppCompatActivity {
     public static void setMyUsername(String name){
         myUsername=name;
     }
+
+
+
 }

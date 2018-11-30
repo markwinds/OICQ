@@ -18,9 +18,10 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 
 public class ServerManager extends Thread {
-    private static final String IP = "192.168.70.41";			//这里填写网络ip，如果不用付费的内网穿透，这里在每次开通内网穿透的时候都要改为对应ip
+    //private static final String IP = "192.168.70.41";			//这里填写网络ip，如果不用付费的内网穿透，这里在每次开通内网穿透的时候都要改为对应ip
     //private static final String IP = "192.168.1.4";
     //private static final String IP = "http://u3wgnp.natappfree.cc";
+    private static final String IP = "120.79.11.227";
     private Socket socket;
     private String username;
     private int iconID;
@@ -40,14 +41,14 @@ public class ServerManager extends Thread {
 
     public void run() {
         try {
-            socket = new Socket(IP, 27777);			//ip用来确定主机，27777用来确定主机的端口
+            socket = new Socket(IP, 1116);			//ip用来确定主机，27777用来确定主机的端口
             bufferedReader =  new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 
             String m = null;
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-               // Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被调用");
+                //Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被调用");
                 if (!line.equals("-1")) {
                     m += line;
                 } else {
@@ -61,6 +62,10 @@ public class ServerManager extends Thread {
                     } else if(ParaseData.getAction(m).equals("SERMESSAGE")){
                         showMsg(m);
                         //Toast.makeText(MyApplication.getContext(), m, Toast.LENGTH_SHORT).show();
+                    } else if(ParaseData.getAction(m).equals("SERUPDATAFRIEND")){
+                        updateFriends(m);
+                    } else if(ParaseData.getAction(m).equals("SERUPDATAMSG")){
+                        updateMsg(m);
                     } else {
                         message = m;
                     }
@@ -70,6 +75,7 @@ public class ServerManager extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            //Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被over");
             try {
                 bufferedWriter.close();
                 bufferedReader.close();
@@ -153,6 +159,20 @@ public class ServerManager extends Thread {
     public void showMsg(String msg){
         Message message=Message.obtain();
         message.what=3;
+        message.obj=msg;
+        MyHandler.getMyHandler().sendMessage(message);
+    }
+
+    public void updateFriends(String msg){
+        Message message=Message.obtain();
+        message.what=4;
+        message.obj=msg;
+        MyHandler.getMyHandler().sendMessage(message);
+    }
+
+    public void updateMsg(String msg){
+        Message message=Message.obtain();
+        message.what=5;
         message.obj=msg;
         MyHandler.getMyHandler().sendMessage(message);
     }

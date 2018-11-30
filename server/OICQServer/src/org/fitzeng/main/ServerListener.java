@@ -15,7 +15,7 @@ public class ServerListener extends Thread{
 	@Override
 	public void run() {
 		try {
-			serverSocket = new ServerSocket(27777, 30);				//27777是服务器监听的端口，30队列长度
+			serverSocket = new ServerSocket(1116, 30);				//27777是服务器监听的端口，30队列长度
 			while (true) {
 				Socket socket = serverSocket.accept();				//当没有客户端发出请求是程序就会阻塞在这一句
 				System.out.println("Receive socket request, begin to open a thread to server");							//当有客户端发送请求就在服务器控制台输出haha

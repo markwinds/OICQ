@@ -78,12 +78,12 @@ public class DBManager {
 		// createTabGroupInfo();
 
 
-//		createTabFriends();
-//		createTabApply();
-//		createTabMessage();
-//		createTabUserInfo();
-//		createTabFeedback();
-//		createTabMessage();
+		//createTabFriends();
+		//createTabApply();
+		//createTabMessage();
+		//createTabUserInfo();
+		//createTabFeedback();
+		//createTabMessage();
 
 		statement.close();
 	}
@@ -139,27 +139,27 @@ public class DBManager {
 		statement.execute("CREATE TABLE Friends ("
 				+ "username VARCHAR(10),"
 				+ "friendsName VARCHAR(10));");
-		statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Stark\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Elon\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk1\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk3\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk4\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk6\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Stark\", \"Tony\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Tony\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk\", \"Tony\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk1\", \"Tony\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk3\", \"Tony\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk4\", \"Tony\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk6\", \"Tony\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Stark\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Elon\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk1\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk3\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk4\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Tony\", \"Musk6\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Stark\", \"Tony\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Tony\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk\", \"Tony\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk1\", \"Tony\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk3\", \"Tony\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk4\", \"Tony\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk6\", \"Tony\");");
 
-		statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Musk1\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Musk2\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Musk5\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk1\", \"Elon\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk2\", \"Elon\");");
-		statement.execute("INSERT INTO Friends VALUES(\"Musk5\", \"Elon\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Musk1\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Musk2\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Elon\", \"Musk5\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk1\", \"Elon\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk2\", \"Elon\");");
+		//statement.execute("INSERT INTO Friends VALUES(\"Musk5\", \"Elon\");");
 
 	}
 	

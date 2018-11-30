@@ -1,6 +1,7 @@
 package com.example.mark.oicq.activity;
 
 import com.example.mark.oicq.classes.ChatList;
+import com.example.mark.oicq.classes.Friend;
 import com.example.mark.oicq.classes.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,7 +31,7 @@ public class ChatActivity extends AppCompatActivity {
     private static List<Message> messageList=new ArrayList<>();
     private EditText inputText;
     private Button sendButton;
-    private RecyclerView chatRecyclerView;
+    private static RecyclerView chatRecyclerView;
     private static MessageAdapter messageAdapter;
     private static String friendName;
 
@@ -98,8 +99,10 @@ public class ChatActivity extends AppCompatActivity {
                 ChatList clist=new ChatList(name);
                 clist.setMessageList(mlist);
                 chatLists.set(i,clist);
-                messageList=getListByName(friendName);
-                messageAdapter.notifyItemInserted(messageList.size()-1);
+                if(name.equals(friendName)){
+                    messageList=getListByName(friendName);
+                    messageAdapter.notifyItemInserted(messageList.size()-1);
+                }
                 return;
             }
         }
@@ -108,9 +111,25 @@ public class ChatActivity extends AppCompatActivity {
         ChatList clist=new ChatList(name);
         clist.setMessageList(mlist);
         chatLists.add(clist);
-        messageList=getListByName(friendName);
-        messageAdapter.notifyDataSetChanged();
+        if(name.equals(friendName)){
+            messageList=getListByName(friendName);
+            messageAdapter.notifyDataSetChanged();
+            //chatRecyclerView.scrollToPosition(messageList.size()-1);
+        }
     }
+
+//    public static void initChat(){
+//        while (HomePageActivity.getFriendList().size()!=0){
+//            Friend friend;
+//            friend=HomePageActivity.getFriendList().get(0);
+//            friendName=friend.getFriendName();
+//            GridLayoutManager layoutManager=new GridLayoutManager(MyApplication.getContext(),1);
+//            chatRecyclerView.setLayoutManager(layoutManager);
+//            messageList=getListByName(friendName);
+//            messageAdapter=new MessageAdapter(messageList);
+//            chatRecyclerView.setAdapter(messageAdapter);
+//        }
+//    }
 
 //    public void InitMessages(){
 //        for(int i=0;i<4;i++){

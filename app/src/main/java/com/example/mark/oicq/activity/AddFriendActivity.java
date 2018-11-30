@@ -48,6 +48,10 @@ public class AddFriendActivity extends AppCompatActivity {
             Toast.makeText(AddFriendActivity.this, "The information input is illegal", Toast.LENGTH_SHORT).show();
             return;
         }
+        if(HomePageActivity.haveFriend(username)){
+            Toast.makeText(AddFriendActivity.this, username+" is already your friend!!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         String msg = "[ADDFRIEND]:[" + serverManager.getUsername() + ", "+ username + ", " + remark + "]";
         serverManager.sendMessage(this, msg);
         String ack = serverManager.getMessage();

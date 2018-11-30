@@ -45,6 +45,11 @@ public class ChatSocket extends Thread{
 	public void run() {
 		try {
 			try {
+				if(connection==null)
+				{
+					DBManager.getDBManager().connectDB();
+					connection = DBManager.getDBManager().getConnection();
+				}
 				statement = connection.createStatement();
 			}catch(SQLException e) {
 				e.printStackTrace();
@@ -225,13 +230,18 @@ public class ChatSocket extends Thread{
 			resultSet = statement.executeQuery(sql);	//执行数据库语句
 			if (resultSet.next() && iPassword.equals(resultSet.getString(1)) ) {	//resultSet.getString(1)中的1代表的是第1列，列数编号从1开始，参数也可以是列的名字
 				sendMsg("[ACKLOGIN]:[1]");		//向客户端发送成功信息
-				updataUserInfo(iusername,"signed","1");
 				this.username = iusername;
 				MainWindow.getMainWindow().setShowMsg(this.username + " login in!");
 				MainWindow.getMainWindow().addOnlineUsers(this.username);
 				socketMsg = new SocketMsg(this,  this.username);		//某用户拥有的某线程
 				ChatManager.getChatManager().add(socketMsg);
+				try {
+					Thread.sleep(2000);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
 				updataNewLogin();
+				updataUserInfo(iusername,"signed","1");
 				return ;		//返回成功反馈后就结束，不会执行下面的sendMsg("[ACKLOGIN]:[0]")
 			}
     	} catch (SQLException e) {
@@ -340,11 +350,8 @@ public class ChatSocket extends Thread{
 				ChatSocket chatSocket = chatManager.getSocketMsg(aim).getChatSocket();
 				String msg1 = "[SERMESSAGE]:[" + origin + ", "+ aim + ", " + content + "]";
 				chatSocket.sendMsg(msg1);	
-			}else{			
-//				sql="INSERT INTO Feedback VALUES ('" + origin + "','" + aim + "','"+status+"');";
-//				doExecute(sql);
-//				updataUserInfo(aim,"updates","1");
 			}
+			statement.execute("INSERT INTO Message VALUES(\""+origin+"\", \""+aim+"\", \""+content+"\");");
 			return;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -425,6 +432,36 @@ public class ChatSocket extends Thread{
 				statement.execute(sql);
 			}
 			updataUserInfo(username,"updates","0");
+			/*-------------------下面更新朋友列表和信息列表----------------------------------------*/
+			sql = "SELECT * FROM Friends WHERE username = '" + username + "';";	
+			resultSet = statement.executeQuery(sql);
+			while(resultSet.next()){
+				String host,frined;
+				host=resultSet.getString("username");
+				frined=resultSet.getString("friendsName");
+				try {
+					Thread.sleep(500);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+				String msg1 = "[SERUPDATAFRIEND]:[" + host + ", "+ frined + "]";
+				sendMsg(msg1);
+			}
+			sql = "SELECT * FROM Message WHERE origin = '" + username + "' || aim = '"+username+"';";	
+			resultSet = statement.executeQuery(sql);
+			while(resultSet.next()){
+				String origin,aim,message;
+				origin=resultSet.getString("origin");
+				aim=resultSet.getString("aim");
+				message=resultSet.getString("message");
+				try {
+					Thread.sleep(500);
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+				String msg1 = "[SERUPDATAMSG]:[" + origin + ", "+ aim + ", " + message + "]";
+				sendMsg(msg1);
+			}
 		}catch (SQLException e) {
 			e.printStackTrace();
 		}
