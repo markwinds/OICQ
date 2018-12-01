@@ -46,6 +46,7 @@ public class ChatActivity extends AppCompatActivity {
         messageList=getListByName(friendName);
         messageAdapter=new MessageAdapter(messageList);
         chatRecyclerView.setAdapter(messageAdapter);
+        chatRecyclerView.scrollToPosition(messageList.size()-1);
 
 
         sendButton.setOnClickListener(new View.OnClickListener() {
