@@ -16,9 +16,7 @@ public class StartServers {
 				try {
 					MainWindow frame = MainWindow.getMainWindow();
 					DBManager dbManager = DBManager.getDBManager();
-					
 					ServerListener listener = new ServerListener();
-					
 					frame.setOnStartServersListener(new OnStartServersListener() {						
 						// Do something when servers stop
 						@Override
@@ -35,14 +33,14 @@ public class StartServers {
 						@Override
 						public void start() {
 							dbManager.addDBDriver();
-							dbManager.connectDB();
+							dbManager.connectDB();		//建立连接
 							try {
-								dbManager.initDB();
+								dbManager.initDB();		//初始化数据库
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 							if (!listener.isAlive()) {
-								listener.start();
+								listener.start();		//开启服务
 							}
 						}
 					});

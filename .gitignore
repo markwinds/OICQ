@@ -65,3 +65,16 @@ fastlane/test_output
 fastlane/readme.md
 server/OICQServer/.project
 server/OICQServer/.settings/org.eclipse.jdt.core.prefs
+*.fdx
+*.fdt
+*.fnm
+*.frq
+*.nrm
+*.prx
+*.tii
+*.tis
+*.fnm
+*.7z
+server/.recommenders/index/http___download_eclipse_org_recommenders_models_photon_/segments_6
+*.aab
+*.json

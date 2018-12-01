@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mark.oicq.R;
@@ -26,6 +27,7 @@ import com.example.mark.oicq.adapter.FriendAdapter;
 import com.example.mark.oicq.classes.Friend;
 import com.example.mark.oicq.classes.MyDatabaseHelper;
 import com.example.mark.oicq.context.MyApplication;
+import com.example.mark.oicq.server.ServerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomePageActivity extends AppCompatActivity {
 
-    //private Friend friend=new Friend(R.drawable.profile_big,"Lucy");
     private static String myUsername;
     private static List<Friend> friendList=new ArrayList<>();
     private SwipeRefreshLayout homeRefresh;
@@ -50,11 +51,12 @@ public class HomePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-
-        MyApplication.setActivityContent(HomePageActivity.this);
+        MyApplication.setActivityContent(HomePageActivity.this);    //将该活动的上下文丢入到上下文栈中，以便更新UI的时候调用上下文
 
         final DrawerLayout mDrawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        TextView navUsername=navView.getHeaderView(0).findViewById(R.id.username);
+        navUsername.setText(myUsername);
         ImageView homeProfile=findViewById(R.id.home_profile);
         homeRecyclerView=findViewById(R.id.home_recycle_view);
         homeRefresh=findViewById(R.id.home_refresh);
@@ -63,19 +65,13 @@ public class HomePageActivity extends AppCompatActivity {
         db=dbhelper.getWritableDatabase();
 
         friendList.clear();
-//        for(int i=0;i<50;i++){
-//            friendList.add(friend);
-//        }
 
+        /*--------------设置适配器--------------------*/
         GridLayoutManager layoutManager=new GridLayoutManager(this,1);
         homeRecyclerView.setLayoutManager(layoutManager);
         friendAdapter=new FriendAdapter(friendList);
         homeRecyclerView.setAdapter(friendAdapter);
         homeRefresh.setColorSchemeResources(R.color.colorPrimary);
-
-        //ChatActivity.initChat();
-
-        //initData();
 
         homeProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,9 +97,11 @@ public class HomePageActivity extends AppCompatActivity {
         });
     }//create
 
+
     public static List<Friend> getFriendList(){
         return friendList;
     }
+
 
     public static void addFriend(String friend){
         friendList.add(new Friend(R.drawable.profile_big,friend));
@@ -114,6 +112,8 @@ public class HomePageActivity extends AppCompatActivity {
 //        db.insert("friends",null,values);
     }
 
+
+    /*检测列表中是否已经有该朋友*/
     public static boolean haveFriend(String friend){
         for(int i=0;i<friendList.size();i++){
             if(friendList.get(i).getFriendName().equals(friend)){
@@ -123,6 +123,8 @@ public class HomePageActivity extends AppCompatActivity {
         return false;
     }
 
+
+    /*这个是本地存储用的，暂时没用*/
     public void initData(){
 //        String[] columns = new  String[] {"friend"};
 //        String[] selectionArgs = new String[]{getMyUsername()};
@@ -136,14 +138,20 @@ public class HomePageActivity extends AppCompatActivity {
         }
     }
 
+
     public static String getMyUsername(){
         return myUsername;
     }
+
 
     public static void setMyUsername(String name){
         myUsername=name;
     }
 
-
+    @Override
+    public void finish(){
+        super.finish();
+        ServerManager.getServerManager().claseAll();
+    }
 
 }

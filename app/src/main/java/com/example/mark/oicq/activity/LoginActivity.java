@@ -36,10 +36,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);   //隐藏导航栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);       //隐藏状态栏
         }
-        //getSupportActionBar().hide();       //隐藏actionbar
-        MyHandler.getMyHandler();       //myHandler一定要在主线程中初始化
-        serverManager.start();      //开启线程
 
+        MyHandler.getMyHandler();       //myHandler一定要在主线程中初始化
+        new Thread(serverManager).start();
 
         Button loginButton=findViewById(R.id.login_button);
         loginButton.setOnClickListener(this);
@@ -54,7 +53,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //允许在主线程中进行耗时操作
 //        StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
 //        StrictMode.setThreadPolicy(policy);
-
     }
 
 
@@ -62,22 +60,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login_button: {
-                String username = usernameInput.getText().toString();
+                String username = usernameInput.getText().toString();   //将输入框内的字符串读取出来
                 String password = passwordInput.getText().toString();
-                if (login(username, password)) {
-                    //--------在服务器端判断账号密码正确后就将用户状态置为上线-------
-                    rememberMe();
-                    serverManager.setUsername(username);
-                    HomePageActivity.setMyUsername(username);
-                    Intent intent = new Intent(this, HomePageActivity.class);
-                    startActivity(intent);
-                    finish();
-                    Toast.makeText(LoginActivity.this, "Log in succeed", Toast.LENGTH_SHORT).show();
-                } else {
-                    usernameInput.setText("");
-                    passwordInput.setText("");
-                    Toast.makeText(LoginActivity.this, "Log in failed", Toast.LENGTH_SHORT).show();
-                }
+                switch (login(username, password)){
+                    case 0:{
+                        usernameInput.setText("");
+                        passwordInput.setText("");
+                        Toast.makeText(LoginActivity.this, "username or password is wrong", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    case 1:{
+                        //--------在服务器端判断账号密码正确后就将用户状态置为上线-------
+                        rememberMe();   //检测是否有勾选记住密码
+                        serverManager.setUsername(username);    //设置该线程的用户名
+                        HomePageActivity.setMyUsername(username);
+                        Intent intent = new Intent(this, HomePageActivity.class);
+                        startActivity(intent);
+                        finish();
+                        Toast.makeText(LoginActivity.this, "Log in succeed", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    case 2:{
+                        Toast.makeText(LoginActivity.this, "username or password is illegal", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    case 3:{
+                        Toast.makeText(LoginActivity.this, "connect to server out of time", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                }//switch
                 break;
             }
             case R.id.signin_button: {
@@ -103,28 +114,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
     //发起登录请求
-    private boolean login(String username, String password) {
+    /*输入不合法则返回2
+      服务器连接超时返回3
+      密码错误返回0
+      密码正确返回1*/
+    private int login(String username, String password) {
         // check username and password whether legal
-        if (username == null || username.length() > 10 || password.length() > 20) {
-            return false;
+        if (username.equals("") || username.length() > 10 || password.length() > 20) {
+            return 2;   //输入不合法则返回2
         }
         // send msg to servers
         String msg = "[LOGIN]:[" + username + ", " + password + "]";
-
         serverManager.sendMessage(this, msg);
-
         // get msg from servers return
         String ack = serverManager.getMessage();
         // deal msg
         if (ack == null) {
-            return false;
+            return 3;
         }
-        serverManager.setMessage(null);
+        serverManager.setMessage(null);     //读取完服务器的信息后将接收区（message）清空
         String p = "\\[ACKLOGIN\\]:\\[(.*)\\]";
         Pattern pattern = Pattern.compile(p);
         Matcher matcher = pattern.matcher(ack);
-        return matcher.find() && matcher.group(1).equals("1");
+        if(matcher.find() && matcher.group(1).equals("1")){
+            return 1;
+        }
+        return 0;
     }
+
 
     private int signin(String username, String password) {
         // check username and password whether legal
@@ -133,9 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         // send msg to servers
         String msg = "[REGISTER]:[" + username + ", " + password + "]";
-
         serverManager.sendMessage(this, msg);
-
         // get msg from servers return
         String ack = serverManager.getMessage();
         // deal msg
@@ -158,28 +173,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return 0;
     }
 
+
+    /*进入登录界面后将记住的用户名和密码填入*/
     public void loadData(){
         SharedPreferences pre=getSharedPreferences("remember",MODE_PRIVATE);
         String username=pre.getString("username","");
         String password=pre.getString("password","");
         boolean checkbox=pre.getBoolean("checkbox",false);
-        checkBox.setChecked(checkbox);
-        if(checkbox){
-            usernameInput.setText(username);
+        checkBox.setChecked(checkbox);     //将读入写勾选状态显示出来
+        if(checkbox){       //如果上次已经选择记住密码
+            usernameInput.setText(username);    //将存储的用户名填入
             passwordInput.setText(password);
         }
     }
 
+
+    /*在验证密码成功以后检查是否勾选记住密码，如果勾选则将密码写入存储在下次登录的时候用*/
     public void rememberMe(){
         boolean checkbox=checkBox.isChecked();
         SharedPreferences .Editor remember = getSharedPreferences("remember",MODE_PRIVATE).edit();
-        remember.putBoolean("checkbox",checkbox);
+        remember.putBoolean("checkbox",checkbox);   //更新勾选状态
         remember.apply();
         if(checkbox){
-            remember.putString("username",usernameInput.getText().toString());
+            remember.putString("username",usernameInput.getText().toString());  //如果选择记住用户名则更新用户名
             remember.putString("password",passwordInput.getText().toString());
             remember.apply();
         }
     }
-
 }

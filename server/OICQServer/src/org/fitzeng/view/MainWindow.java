@@ -90,7 +90,7 @@ public class MainWindow extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		textFieldPort = new JTextField();
+		textFieldPort = new JTextField();	//JTextField是构造文本框
 		textFieldPort.setBackground(Color.GRAY);
 		textFieldPort.setForeground(Color.BLACK);
 		textFieldPort.setText("3306");
@@ -100,7 +100,7 @@ public class MainWindow extends JFrame {
 		btnStart.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if (isStart) {
+				if (isStart) {		//在运行状态下点击时则停止服务
 					listener.stop();
 					btnStart.setText("Start");
 					setShowMsg("Server stoped...");
@@ -130,9 +130,10 @@ public class MainWindow extends JFrame {
 		txtOnlineMsg.setText("Online Users");
 		txtOnlineMsg.setColumns(10);
 		
-		scrollPane = new JScrollPane();
-		
+		scrollPane = new JScrollPane();		//JScrollPane构造滚动条
 		scrollPane_1 = new JScrollPane();
+
+		/*下面的代码用来设置布局*/
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)

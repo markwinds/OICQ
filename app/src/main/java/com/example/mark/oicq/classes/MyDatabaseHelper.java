@@ -1,3 +1,10 @@
+
+
+
+
+//用于本地存储，暂时还没用到
+
+
 package com.example.mark.oicq.classes;
 
 import android.content.Context;

@@ -22,11 +22,6 @@ import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
-//    private Message[] messages={
-//            new Message("Mark",0),
-//            new Message("Hi Lucy",1),
-//            new Message("haha",0),
-//            new Message("en",1)};
     private static List<ChatList> chatLists=new ArrayList<>();
     private static List<Message> messageList=new ArrayList<>();
     private EditText inputText;
@@ -48,7 +43,6 @@ public class ChatActivity extends AppCompatActivity {
         titleName.setText(friendName);
         GridLayoutManager layoutManager=new GridLayoutManager(this,1);
         chatRecyclerView.setLayoutManager(layoutManager);
-        //InitMessages();
         messageList=getListByName(friendName);
         messageAdapter=new MessageAdapter(messageList);
         chatRecyclerView.setAdapter(messageAdapter);
@@ -72,25 +66,31 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+
     public static String getFriendName(){
         return friendName;
     }
+
 
     public static void setFriendName(String name){
         friendName=name;
     }
 
+
+    /*根据用户名读取相应的消息队列*/
     public static List<Message> getListByName(String name){
         for(int i=0;i<chatLists.size();i++){
             if(name.equals(chatLists.get(i).getFriendName())){
                 return chatLists.get(i).getMessageList();
             }
         }
-        ChatList chatList=new ChatList(friendName);
+        ChatList chatList=new ChatList(friendName); //如果还没有该朋友的消息队列则创建
         chatLists.add(chatList);
         return chatList.getMessageList();
     }
 
+
+    /*将该好友的消息加入到对应名字的用户队列中*/
     public static void addMessage(String name,String content,int type){
         for(int i=0;i<chatLists.size();i++){
             if(name.equals(chatLists.get(i).getFriendName())){
@@ -99,7 +99,7 @@ public class ChatActivity extends AppCompatActivity {
                 ChatList clist=new ChatList(name);
                 clist.setMessageList(mlist);
                 chatLists.set(i,clist);
-                if(name.equals(friendName)){
+                if(name.equals(friendName)){    //只有当前打开的聊天界面用户名和收到消息的对象相同时才通知控件更新界面
                     messageList=getListByName(friendName);
                     messageAdapter.notifyItemInserted(messageList.size()-1);
                 }
@@ -114,26 +114,7 @@ public class ChatActivity extends AppCompatActivity {
         if(name.equals(friendName)){
             messageList=getListByName(friendName);
             messageAdapter.notifyDataSetChanged();
-            //chatRecyclerView.scrollToPosition(messageList.size()-1);
         }
     }
 
-//    public static void initChat(){
-//        while (HomePageActivity.getFriendList().size()!=0){
-//            Friend friend;
-//            friend=HomePageActivity.getFriendList().get(0);
-//            friendName=friend.getFriendName();
-//            GridLayoutManager layoutManager=new GridLayoutManager(MyApplication.getContext(),1);
-//            chatRecyclerView.setLayoutManager(layoutManager);
-//            messageList=getListByName(friendName);
-//            messageAdapter=new MessageAdapter(messageList);
-//            chatRecyclerView.setAdapter(messageAdapter);
-//        }
-//    }
-
-//    public void InitMessages(){
-//        for(int i=0;i<4;i++){
-//            messageList.add(messages[i]);
-//        }
-//    }
 }

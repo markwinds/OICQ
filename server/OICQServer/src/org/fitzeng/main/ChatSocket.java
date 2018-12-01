@@ -45,9 +45,9 @@ public class ChatSocket extends Thread{
 	public void run() {
 		try {
 			try {
-				if(connection==null)
+				if(connection==null)	//数据库在过了一段时间没有连接请求后就会断开，所以这里在新建线程的时候检测是否断开，断开的话就重连
 				{
-					DBManager.getDBManager().connectDB();
+					DBManager.getDBManager().connectDB();	//重连
 					connection = DBManager.getDBManager().getConnection();
 				}
 				statement = connection.createStatement();
@@ -58,11 +58,15 @@ public class ChatSocket extends Thread{
 			System.out.println("thread is builded");
 			while ((line = bufferedReader.readLine()) != null) {
 				if (!line.equals("-1")) {	
-					message += line;
+					if(message==null){
+						message=line;
+					}else{
+						message += line;
+					}
 				} else {
-					System.out.println("begin to deal msg");
+					System.out.println("");
+					System.out.println("receive : " + message);		//控制台显示接受到的数据
 					delMessage(message);							//处理接收到的数据
-	            	System.out.println("receive : " + message);		//控制台显示接受到的数据
 					line = null;
 					message = null;
 				}
@@ -73,7 +77,7 @@ public class ChatSocket extends Thread{
 			System.out.println("thread is over!!!");
 			try {
 				try {
-					String sql = "UPDATE UserInfo SET signed = '0' WHERE username = '" + username + "';";
+					String sql = "UPDATE UserInfo SET signed = '0' WHERE username = '" + username + "';";	//标记用户下线
 					Statement statement = connection.createStatement();
 					statement.execute(sql);
 				}catch (SQLException e) {
@@ -91,6 +95,7 @@ public class ChatSocket extends Thread{
 		}
 	}
 
+
 	//处理数据,根据数据头处理不同的数据
 	//------------------------------------------改成自己通讯协议用的数据头----------------------------------------
 	public void delMessage(String msg) {
@@ -102,13 +107,12 @@ public class ChatSocket extends Thread{
 				case "ADDFRIEND": { dealAddFriend(msg); break; }
 				case "FEEDBACKFRIEND": { dealFeedbackFriend(msg); break; }
 				case "SENDMESSAGE": { dealSendMessage(msg); break; }
-
-				case "CHATMSG": { dealChatMsg(msg); break; }
 				default : break;
 			}
 		}
 	}
 	
+
 	//发送数据
     public void sendMsg(String msg) {
     	try {
@@ -128,61 +132,6 @@ public class ChatSocket extends Thread{
     public String getMsg() {
     	return message;
     }
-    
-
-    private void dealChatMsg(String msg) {
-    	String chatObj = null;
-    	String content = null;
-    	String avatarID = null;
-    	String msgType = null;
-    	String p = "\\[CHATMSG\\]:\\[(.*), (.*), (.*), (.*)\\]";
-    	Pattern pattern = Pattern.compile(p);
-    	Matcher matcher = pattern.matcher(msg);
-    	if (matcher.find()) {
-    		chatObj = matcher.group(1);
-    		content = matcher.group(2);
-    		avatarID = matcher.group(3);
-    		msgType = matcher.group(4);
-    	} else {
-    		return;
-    	}
-    	String out = null;
-    	String sqlGroup = "SELECT * FROM GROUPS WHERE groupName = '" + chatObj+ "';";
-    	try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery(sqlGroup);
-			// gruop chat
-			if (resultSet.next()) {
-				// find all group members to send msg
-				String sql = "SELECT groupMemberName FROM GROUPINFO WHERE groupName = '" + chatObj + "';";
-				resultSet = statement.executeQuery(sql);
-				while (resultSet.next()) {					
-					// if user is online , then send.
-					for (SocketMsg SocketMsg : ChatManager.getChatManager().socketList) {
-						if (SocketMsg.getUsername().equals(resultSet.getString(1)) && !SocketMsg.getUsername().equals(username)) {
-							out = "[GETCHATMSG]:[" + username + ", " + content + ", " + avatarID + ", Text, " + chatObj + "]";
-							SocketMsg.getChatSocket().sendMsg(out);
-						}
-					}
-				}
-			// private chat
-			} else {
-				for (SocketMsg socketManager : ChatManager.getChatManager().socketList) {
-					if (socketManager.getUsername().equals(chatObj)) {
-						out = "[GETCHATMSG]:[" + username + ", " + content + ", " + avatarID + ", Text,  ]";
-						socketManager.getChatSocket().sendMsg(out);
-					}
-				}
-			}
-			out = "[ACKCHATMSG]:[1]";
-			sendMsg(out);
-		} catch (SQLException e) {
-			out = "[ACKCHATMSG]:[0]";
-			sendMsg(out);
-			e.printStackTrace();
-		}
-    }
-
 
 
     private void dealRegister(String msg) {
@@ -205,8 +154,6 @@ public class ChatSocket extends Thread{
     		sql="INSERT INTO UserInfo VALUES ('" + iusername + "','" + iPassword + "','0','0');";
 			statement.execute(sql);	//执行数据库语句
 			this.username = iusername;
-			MainWindow.getMainWindow().setShowMsg(this.username + " sign in!");
-			MainWindow.getMainWindow().addOnlineUsers(this.username);
 			sendMsg("[ACKREGISTER]:[1]");
 			return ;		//返回成功反馈后就结束，不会执行下面的sendMsg("[ACKLOGIN]:[0]")
         	//sendMsg("[ACKREGISTER]:[0]");
@@ -236,13 +183,15 @@ public class ChatSocket extends Thread{
 				socketMsg = new SocketMsg(this,  this.username);		//某用户拥有的某线程
 				ChatManager.getChatManager().add(socketMsg);
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				}catch(InterruptedException e){
 					e.printStackTrace();
 				}
 				updataNewLogin();
 				updataUserInfo(iusername,"signed","1");
 				return ;		//返回成功反馈后就结束，不会执行下面的sendMsg("[ACKLOGIN]:[0]")
+			}else {
+				sendMsg("[ACKLOGIN]:[0]");
 			}
     	} catch (SQLException e) {
 			e.printStackTrace();
@@ -274,14 +223,21 @@ public class ChatSocket extends Thread{
 				return;
 			}
 			sendMsg("[ACKADDFRIEND]:[1]");
-			if (resultSet.getString("signed").equals("1")) {		//如果该用户在线
+			sql="SELECT * FROM Apply WHERE origin = '" + origin + "' && aim = '"+aim+"';";	//检测申请表中是否已经有这一条记录
+			resultSet = statement.executeQuery(sql);
+			if(!resultSet.next()){
+				sql = "SELECT * FROM UserInfo WHERE username = '" + aim + "';";	
+				resultSet = statement.executeQuery(sql);
+				resultSet.next();
+				if (resultSet.getString("signed").equals("1")) {		//如果该用户在线
 				ChatSocket chatSocket = chatManager.getSocketMsg(aim).getChatSocket();
 				String msg1 = "[SERAPPLYFRIEND]:[" + origin + ", "+ aim + ", " + remark + "]";
 				chatSocket.sendMsg(msg1);	
-			}else{	//用户不在线就将信息写入申请表
-				sql="INSERT INTO Apply VALUES ('" + origin + "','" + aim + "','"+remark+"');";
-				doExecute(sql);
-				updataUserInfo(aim,"updates","1");
+				}else{	//用户不在线就将信息写入申请表
+					sql="INSERT INTO Apply VALUES ('" + origin + "','" + aim + "','"+remark+"');";
+					doExecute(sql);
+					updataUserInfo(aim,"updates","1");
+				}
 			}
 			return;
 		} catch (SQLException e) {
@@ -403,7 +359,7 @@ public class ChatSocket extends Thread{
 					aim=resultSet.getString("aim");
 					remark=resultSet.getString("remark");
 					try {
-						Thread.sleep(500);
+						Thread.sleep(50);
 					}catch(InterruptedException e){
 						e.printStackTrace();
 					}
@@ -421,7 +377,7 @@ public class ChatSocket extends Thread{
 					aim=resultSet.getString("aim");
 					status=resultSet.getString("status");
 					try {
-						Thread.sleep(500);
+						Thread.sleep(50);
 					}catch(InterruptedException e){
 						e.printStackTrace();
 					}
@@ -440,7 +396,7 @@ public class ChatSocket extends Thread{
 				host=resultSet.getString("username");
 				frined=resultSet.getString("friendsName");
 				try {
-					Thread.sleep(500);
+					Thread.sleep(50);
 				}catch(InterruptedException e){
 					e.printStackTrace();
 				}
@@ -455,7 +411,7 @@ public class ChatSocket extends Thread{
 				aim=resultSet.getString("aim");
 				message=resultSet.getString("message");
 				try {
-					Thread.sleep(500);
+					Thread.sleep(50);
 				}catch(InterruptedException e){
 					e.printStackTrace();
 				}

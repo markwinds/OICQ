@@ -16,11 +16,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class ServerManager extends Thread {
+public class ServerManager implements Runnable {
     //private static final String IP = "192.168.70.41";			//这里填写网络ip，如果不用付费的内网穿透，这里在每次开通内网穿透的时候都要改为对应ip
-    //private static final String IP = "192.168.1.4";
-    //private static final String IP = "http://u3wgnp.natappfree.cc";
     private static final String IP = "120.79.11.227";
     private Socket socket;
     private String username;
@@ -28,16 +28,13 @@ public class ServerManager extends Thread {
     private String message = null;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    private ReceiveChatMsg receiveChatMsg;
     private static final ServerManager serverManager = new ServerManager();
+
 
     public static ServerManager getServerManager() {
         return serverManager;
     }
 
-    private ServerManager() {
-        receiveChatMsg = new ReceiveChatMsg();
-    }
 
     public void run() {
         try {
@@ -48,23 +45,24 @@ public class ServerManager extends Thread {
             String m = null;
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                //Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被调用");
                 if (!line.equals("-1")) {
-                    m += line;
+                    if(m!=null){
+                        m += line;
+                    }else{
+                        m=line;
+                    }
                 } else {
-                    if (ParaseData.getAction(m).equals("GETCHATMSG")) {
-                        receiveChatMsg.delChatMsg(m);
-                    } else if(ParaseData.getAction(m).equals("SERAPPLYFRIEND")){       //如果是服务器主动发起的好友申请
+                    /*----------------------------服务器主动发起的请求统一分开处理，并且以SER开头--------------------------*/
+                    if(getAction(m).equals("SERAPPLYFRIEND")){       //如果是服务器主动发起的好友申请
                         applyFriend(m);
-                    } else if(ParaseData.getAction(m).equals("SERRESPONDFRIEND")){
-                       // Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","收到信息");
+                    } else if(getAction(m).equals("SERRESPONDFRIEND")){
                         respondFriend(m);
-                    } else if(ParaseData.getAction(m).equals("SERMESSAGE")){
+                    } else if(getAction(m).equals("SERMESSAGE")){
                         showMsg(m);
                         //Toast.makeText(MyApplication.getContext(), m, Toast.LENGTH_SHORT).show();
-                    } else if(ParaseData.getAction(m).equals("SERUPDATAFRIEND")){
+                    } else if(getAction(m).equals("SERUPDATAFRIEND")){
                         updateFriends(m);
-                    } else if(ParaseData.getAction(m).equals("SERUPDATAMSG")){
+                    } else if(getAction(m).equals("SERUPDATAMSG")){
                         updateMsg(m);
                     } else {
                         message = m;
@@ -75,7 +73,6 @@ public class ServerManager extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            //Log.e("lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll","线程被over");
             try {
                 bufferedWriter.close();
                 bufferedReader.close();
@@ -88,10 +85,10 @@ public class ServerManager extends Thread {
 
 
     public void sendMessage(Context context, String msg) {
-        final String message=msg;
+        final String message=msg;   //这里必须声明为final
         new Thread(new Runnable() {
             @Override
-            public void run() {
+            public void run() {     //因为该方法在主线程中被调用，且是耗时操作，所以这里开启一个新的线程来处理
                 try {
                     while (socket == null) ;
                     if (bufferedWriter != null) {
@@ -107,14 +104,17 @@ public class ServerManager extends Thread {
         }).start();
     }
 
-    //用来接收数据存放到message
-    public String getMessage() {				//这里用来干什么的
-        for (int i = 0; i < 5; i++) {
+
+    /*在客户端发送请求后即调用此方法，服务器发回的消息被线程自动存储在message中，
+    该方法从message中读取信息并返回
+    */
+    public String getMessage() {
+        for (int i = 0; i < 25; i++) {
             if (message != null) {
                 break;
             }
             try {
-                Thread.sleep(500);				//这是等待服务器响应吗
+                Thread.sleep(100);				//等待服务器响应时间，最长时间为25*100 2.5秒
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -134,45 +134,65 @@ public class ServerManager extends Thread {
         this.username = username;
     }
 
-    public int getIconID() {
-        return iconID;
+    public String getAction(String msg) {
+        String p = "\\[(.*)\\]:";
+        Pattern pattern = Pattern.compile(p);
+        Matcher matcher = pattern.matcher(msg);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            return "error";
+        }
     }
 
-    public void setIconID(int iconID) {
-        this.iconID = iconID;
+
+    public void claseAll(){
+        try {
+            bufferedWriter.close();
+            bufferedReader.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //stopThreadFlag=true;
     }
+
 
     public void applyFriend(String msg){
         Message message=Message.obtain();
-        message.what=1;
+        message.what=MyHandler.APPLYFRIEND;
         message.obj=msg;
         MyHandler.getMyHandler().sendMessage(message);
     }
+
 
     public void respondFriend(String msg){
         Message message=Message.obtain();
-        message.what=2;
+        message.what=MyHandler.RESPONDFRIEND;
         message.obj=msg;
         MyHandler.getMyHandler().sendMessage(message);
     }
+
 
     public void showMsg(String msg){
         Message message=Message.obtain();
-        message.what=3;
+        message.what=MyHandler.SHOWMSG;
         message.obj=msg;
         MyHandler.getMyHandler().sendMessage(message);
     }
+
 
     public void updateFriends(String msg){
         Message message=Message.obtain();
-        message.what=4;
+        message.what=MyHandler.UPDATEFRIENDS;
         message.obj=msg;
         MyHandler.getMyHandler().sendMessage(message);
     }
 
+
     public void updateMsg(String msg){
         Message message=Message.obtain();
-        message.what=5;
+        message.what=MyHandler.UPDATAMSG;
         message.obj=msg;
         MyHandler.getMyHandler().sendMessage(message);
     }

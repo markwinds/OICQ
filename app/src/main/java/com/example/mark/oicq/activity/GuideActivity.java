@@ -20,7 +20,7 @@ import java.util.List;
 
 public class GuideActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
-    private static final int PICTURE_NUM=3;                                 //图片的数量
+    private static final int PICTURE_NUM=3;                                 //引导图片的数量
     private int[] pointId={R.id.iv_point1,R.id.iv_point2,R.id.iv_point3};   //进度点对应的控件id
     private List<ImageView> points=new ArrayList<ImageView>();              //存储进度点的实例
     private List<View> viewList= new ArrayList<>();                         //用来存储viewPage每一页的布局
@@ -57,7 +57,7 @@ public class GuideActivity extends AppCompatActivity implements ViewPager.OnPage
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(GuideActivity.this, LoginActivity.class);
+                Intent intent = new Intent(GuideActivity.this, LoginActivity.class);    //点击start键进入登录页面
                 startActivity(intent);
             }
         });

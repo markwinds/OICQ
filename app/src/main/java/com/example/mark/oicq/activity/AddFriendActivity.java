@@ -26,8 +26,7 @@ public class AddFriendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
-
-        MyApplication.setActivityContent(AddFriendActivity.this);
+        MyApplication.setActivityContent(AddFriendActivity.this);   //顶层上下文
 
         usernameInput=findViewById(R.id.add_friend_name_text);
         remarkInput=findViewById(R.id.add_friend_remark_text);
@@ -42,6 +41,7 @@ public class AddFriendActivity extends AppCompatActivity {
             }
         });
     }//onCreate
+
 
     public void addFriend(String username, String remark){
         if (username == null || username.length() > 10 || remark.length() > 300) {

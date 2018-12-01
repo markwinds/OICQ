@@ -21,12 +21,17 @@ import java.util.regex.Pattern;
 public class MyHandler extends Handler {
 
     private static MyHandler myHandler=new MyHandler();
+    public  final static int APPLYFRIEND=1;
+    public  final static int RESPONDFRIEND=2;
+    public  final static int SHOWMSG=3;
+    public  final static int UPDATEFRIENDS=4;
+    public  final static int UPDATAMSG=5;
 
     @Override
     public void handleMessage(Message msg) {
         super.handleMessage(msg);
         switch (msg.what){
-            case 1:{            //当有好友申请时的UI操作
+            case APPLYFRIEND:{            //当有好友申请时的UI操作
                 String message=(String)msg.obj;
                 String p = "\\[SERAPPLYFRIEND\\]:\\[(.*), (.*), (.*)\\]";
                 Pattern pattern = Pattern.compile(p);
@@ -95,11 +100,11 @@ public class MyHandler extends Handler {
                         })
                         .create();
                 addFriendDialog.show();
-                addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(15);
+                addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(15); //设置字体大小
                 addFriendDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextSize(15);
                 break;
             }
-            case 2:{
+            case RESPONDFRIEND:{
                 String message=(String)msg.obj;
                 String p = "\\[SERRESPONDFRIEND\\]:\\[(.*), (.*), (.*)\\]";
                 Pattern pattern = Pattern.compile(p);
@@ -129,10 +134,9 @@ public class MyHandler extends Handler {
                 addFriendDialog.show();
                 addFriendDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextSize(15);
                 addFriendDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextSize(15);
-                //Toast.makeText(MyApplication.getContext(), "You succeed!!!!", Toast.LENGTH_SHORT).show();
                 break;
             }
-            case 3:{
+            case SHOWMSG:{
                 String message=(String)msg.obj;
                 String p = "\\[SERMESSAGE\\]:\\[(.*), (.*), (.*)\\]";
                 Pattern pattern = Pattern.compile(p);
@@ -142,13 +146,10 @@ public class MyHandler extends Handler {
                 origin=matcher.group(1);            //在调用group之前必须先调用find方法
                 aim=matcher.group(2);
                 content=matcher.group(3);
-                //Toast.makeText(MyApplication.getContext(), "receive message", Toast.LENGTH_SHORT).show();
-                ChatActivity.addMessage(origin,content, com.example.mark.oicq.classes.Message.MESSAGE_TYPE_RECEIVED);
-                //ChatActivity.chatRecyclerView.scrollToPosition(messageList.size()-1);
-                //Toast.makeText(MyApplication.getContext(), "finish", Toast.LENGTH_SHORT).show();
+                ChatActivity.addMessage(origin,content, com.example.mark.oicq.classes.Message.MESSAGE_TYPE_RECEIVED);   //更新消息列表
                 break;
             }
-            case 4:{
+            case UPDATEFRIENDS:{
                 String message=(String)msg.obj;
                 String p = "\\[SERUPDATAFRIEND\\]:\\[(.*), (.*)\\]";
                 Pattern pattern = Pattern.compile(p);
@@ -162,7 +163,7 @@ public class MyHandler extends Handler {
                 }
                 break;
             }
-            case 5:{
+            case UPDATAMSG:{
                 String message=(String)msg.obj;
                 String p = "\\[SERUPDATAMSG\\]:\\[(.*), (.*), (.*)\\]";
                 Pattern pattern = Pattern.compile(p);
@@ -182,6 +183,7 @@ public class MyHandler extends Handler {
             default: break;
         }
     }
+
 
     public static MyHandler getMyHandler(){
         return myHandler;
