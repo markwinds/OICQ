@@ -1,5 +1,6 @@
 package com.example.mark.oicq.activity;
 
+import com.example.mark.oicq.adapter.SoftHideKeyBoardUtil;
 import com.example.mark.oicq.classes.ChatList;
 import com.example.mark.oicq.classes.Friend;
 import com.example.mark.oicq.classes.Message;
@@ -35,6 +36,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        //SoftHideKeyBoardUtil.assistActivity(this);  //解决键盘遮挡问题
         chatRecyclerView=findViewById(R.id.chat_recycle_view);
         inputText=findViewById(R.id.chat_edit);
         sendButton=findViewById(R.id.chat_send);
@@ -46,6 +48,7 @@ public class ChatActivity extends AppCompatActivity {
         messageList=getListByName(friendName);
         messageAdapter=new MessageAdapter(messageList);
         chatRecyclerView.setAdapter(messageAdapter);
+        chatRecyclerView.scrollToPosition(messageList.size()-1);
 
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +61,7 @@ public class ChatActivity extends AppCompatActivity {
 //                    messageList.add(msg);
 //                    messageAdapter.notifyItemInserted(messageList.size()-1);
                     inputText.setText("");
-                    chatRecyclerView.scrollToPosition(messageList.size()-1);
+                    //chatRecyclerView.scrollToPosition(messageList.size()-1);
                     String message = "[SENDMESSAGE]:[" + HomePageActivity.getMyUsername() + ", " + friendName + ", " + content + "]";
                     ServerManager.getServerManager().sendMessage(MyApplication.getContext(), message);
                 }
@@ -102,6 +105,7 @@ public class ChatActivity extends AppCompatActivity {
                 if(name.equals(friendName)){    //只有当前打开的聊天界面用户名和收到消息的对象相同时才通知控件更新界面
                     messageList=getListByName(friendName);
                     messageAdapter.notifyItemInserted(messageList.size()-1);
+                    chatRecyclerView.scrollToPosition(messageList.size()-1);
                 }
                 return;
             }
@@ -114,7 +118,13 @@ public class ChatActivity extends AppCompatActivity {
         if(name.equals(friendName)){
             messageList=getListByName(friendName);
             messageAdapter.notifyDataSetChanged();
+            chatRecyclerView.scrollToPosition(messageList.size()-1);
         }
+    }
+
+
+    public static void closeAll(){
+        chatLists.clear();
     }
 
 }

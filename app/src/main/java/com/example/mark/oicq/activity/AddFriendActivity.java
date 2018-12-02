@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.mark.oicq.R;
+import com.example.mark.oicq.adapter.SoftHideKeyBoardUtil;
 import com.example.mark.oicq.context.MyApplication;
 import com.example.mark.oicq.server.ServerManager;
 
@@ -27,6 +28,7 @@ public class AddFriendActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
         MyApplication.setActivityContent(AddFriendActivity.this);   //顶层上下文
+        SoftHideKeyBoardUtil.assistActivity(this);
 
         usernameInput=findViewById(R.id.add_friend_name_text);
         remarkInput=findViewById(R.id.add_friend_remark_text);

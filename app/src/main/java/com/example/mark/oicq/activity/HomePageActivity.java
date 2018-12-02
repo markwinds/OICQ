@@ -152,6 +152,7 @@ public class HomePageActivity extends AppCompatActivity {
     public void finish(){
         super.finish();
         ServerManager.getServerManager().claseAll();
+        ChatActivity.closeAll();
     }
 
 }

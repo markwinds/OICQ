@@ -45,17 +45,14 @@ public class ChatSocket extends Thread{
 	public void run() {
 		try {
 			try {
-				if(connection==null)	//数据库在过了一段时间没有连接请求后就会断开，所以这里在新建线程的时候检测是否断开，断开的话就重连
-				{
-					DBManager.getDBManager().connectDB();	//重连
-					connection = DBManager.getDBManager().getConnection();
-				}
 				statement = connection.createStatement();
 			}catch(SQLException e) {
 				e.printStackTrace();
 			}
 			String line = null;
-			System.out.println("thread is builded");
+			if(LogManager.getStatus()>=LogManager.OUTPUTIMPMSG) {
+				System.out.println("thread is builded");
+			}
 			while ((line = bufferedReader.readLine()) != null) {
 				if (!line.equals("-1")) {	
 					if(message==null){
@@ -64,8 +61,10 @@ public class ChatSocket extends Thread{
 						message += line;
 					}
 				} else {
-					System.out.println("");
-					System.out.println("receive : " + message);		//控制台显示接受到的数据
+					if(LogManager.getStatus()>=LogManager.OUTPUTMSG) {
+						System.out.println("");
+						System.out.println("receive : " + message);		//控制台显示接受到的数据
+					}
 					delMessage(message);							//处理接收到的数据
 					line = null;
 					message = null;
@@ -74,7 +73,9 @@ public class ChatSocket extends Thread{
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			System.out.println("thread is over!!!");
+			if(LogManager.getStatus()>=LogManager.OUTPUTIMPMSG) {
+				System.out.println("thread is over!!!");
+			}
 			try {
 				try {
 					String sql = "UPDATE UserInfo SET signed = '0' WHERE username = '" + username + "';";	//标记用户下线
@@ -118,7 +119,9 @@ public class ChatSocket extends Thread{
     	try {
     		while (socket == null) ;
             if (bufferedWriter != null) {
-            	System.out.println("send :" + msg);		//在控制台显示要发送的数据
+            	if(LogManager.getStatus()>=LogManager.OUTPUTMSG) {
+            		System.out.println("send :" + msg);		//在控制台显示要发送的数据
+            	}
                 bufferedWriter.write(msg + "\n");
                 bufferedWriter.flush();
                 bufferedWriter.write("-1\n");			//在每个数据后加-1结尾

@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.mark.oicq.R;
+import com.example.mark.oicq.adapter.SoftHideKeyBoardUtil;
 import com.example.mark.oicq.classes.MyHandler;
 import com.example.mark.oicq.context.MyApplication;
 import com.example.mark.oicq.server.ServerManager;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         MyHandler.getMyHandler();       //myHandler一定要在主线程中初始化
         new Thread(serverManager).start();
+        SoftHideKeyBoardUtil.assistActivity(this);
 
         Button loginButton=findViewById(R.id.login_button);
         loginButton.setOnClickListener(this);

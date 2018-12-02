@@ -78,3 +78,6 @@ server/OICQServer/.settings/org.eclipse.jdt.core.prefs
 server/.recommenders/index/http___download_eclipse_org_recommenders_models_photon_/segments_6
 *.aab
 *.json
+*.json
+*.json
+server/.recommenders/index/http___download_eclipse_org_recommenders_models_photon_/segments_7

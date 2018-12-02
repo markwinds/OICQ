@@ -14,6 +14,7 @@ public class StartServers {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					LogManager.setStatus(LogManager.OUTPUTIMPMSG);
 					MainWindow frame = MainWindow.getMainWindow();
 					DBManager dbManager = DBManager.getDBManager();
 					ServerListener listener = new ServerListener();
