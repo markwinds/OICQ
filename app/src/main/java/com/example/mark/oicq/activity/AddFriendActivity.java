@@ -11,13 +11,14 @@ import android.widget.Toast;
 
 import com.example.mark.oicq.R;
 import com.example.mark.oicq.adapter.SoftHideKeyBoardUtil;
+import com.example.mark.oicq.context.ActivityManager;
 import com.example.mark.oicq.context.MyApplication;
 import com.example.mark.oicq.server.ServerManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddFriendActivity extends AppCompatActivity {
+public class AddFriendActivity extends ActivityManager {
 
     private EditText usernameInput;
     private EditText remarkInput;
@@ -27,7 +28,7 @@ public class AddFriendActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
-        MyApplication.setActivityContent(AddFriendActivity.this);   //顶层上下文
+        //MyApplication.setActivityContent(AddFriendActivity.this);   //顶层上下文
         SoftHideKeyBoardUtil.assistActivity(this);
 
         usernameInput=findViewById(R.id.add_friend_name_text);

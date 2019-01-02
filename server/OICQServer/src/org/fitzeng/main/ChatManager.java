@@ -16,6 +16,13 @@ public class ChatManager {
 	}
 		
 	public void add(SocketMsg cs) {
+		for(int i=0;i<socketList.size();i++) {
+			if(socketList.get(i).getUsername().equals(cs.getUsername())) {
+				SocketMsg ss=new SocketMsg(socketList.get(i).getChatSocket(), socketList.get(i).getUsername());
+				remove(ss);
+				
+			}
+		}
 		socketList.add(cs);
 	}
 	

@@ -26,6 +26,7 @@ import com.example.mark.oicq.R;
 import com.example.mark.oicq.adapter.FriendAdapter;
 import com.example.mark.oicq.classes.Friend;
 import com.example.mark.oicq.classes.MyDatabaseHelper;
+import com.example.mark.oicq.context.ActivityManager;
 import com.example.mark.oicq.context.MyApplication;
 import com.example.mark.oicq.server.ServerManager;
 
@@ -34,7 +35,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class HomePageActivity extends AppCompatActivity {
+public class HomePageActivity extends ActivityManager {
 
     private static String myUsername;
     private static List<Friend> friendList=new ArrayList<>();
@@ -51,7 +52,7 @@ public class HomePageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        MyApplication.setActivityContent(HomePageActivity.this);    //将该活动的上下文丢入到上下文栈中，以便更新UI的时候调用上下文
+        //MyApplication.setActivityContent(HomePageActivity.this);    //将该活动的上下文丢入到上下文栈中，以便更新UI的时候调用上下文
 
         final DrawerLayout mDrawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
@@ -105,7 +106,7 @@ public class HomePageActivity extends AppCompatActivity {
 
     public static void addFriend(String friend){
         friendList.add(new Friend(R.drawable.profile_big,friend));
-        friendAdapter.notifyItemChanged(friendList.size()-1);
+        friendAdapter.notifyDataSetChanged();
 //        values.clear();
 //        values.put("host",myUsername);
 //        values.put("friend",friend);

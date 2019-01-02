@@ -16,13 +16,14 @@ import android.widget.Toast;
 import com.example.mark.oicq.R;
 import com.example.mark.oicq.adapter.SoftHideKeyBoardUtil;
 import com.example.mark.oicq.classes.MyHandler;
+import com.example.mark.oicq.context.ActivityManager;
 import com.example.mark.oicq.context.MyApplication;
 import com.example.mark.oicq.server.ServerManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
+public class LoginActivity extends ActivityManager implements View.OnClickListener{
 
     private ServerManager serverManager = ServerManager.getServerManager();
     private TextInputEditText usernameInput;

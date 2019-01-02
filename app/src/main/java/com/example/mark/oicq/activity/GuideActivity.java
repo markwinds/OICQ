@@ -14,11 +14,12 @@ import android.widget.ImageView;
 
 import com.example.mark.oicq.R;
 import com.example.mark.oicq.adapter.GuidePagerAdapter;
+import com.example.mark.oicq.context.ActivityManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GuideActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class GuideActivity extends ActivityManager implements ViewPager.OnPageChangeListener {
 
     private static final int PICTURE_NUM=3;                                 //引导图片的数量
     private int[] pointId={R.id.iv_point1,R.id.iv_point2,R.id.iv_point3};   //进度点对应的控件id

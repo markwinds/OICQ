@@ -13,8 +13,9 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.mark.oicq.R;
+import com.example.mark.oicq.context.ActivityManager;
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends ActivityManager {
 
     private static final int DELAY = 1000;
 

@@ -15,13 +15,14 @@ import android.widget.TextView;
 
 import com.example.mark.oicq.R;
 import com.example.mark.oicq.adapter.MessageAdapter;
+import com.example.mark.oicq.context.ActivityManager;
 import com.example.mark.oicq.context.MyApplication;
 import com.example.mark.oicq.server.ServerManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends ActivityManager {
 
     private static List<ChatList> chatLists=new ArrayList<>();
     private static List<Message> messageList=new ArrayList<>();
